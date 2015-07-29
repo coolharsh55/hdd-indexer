@@ -1,0 +1,186 @@
+__todo.txt__
+========================================================
+
+HDD-Indexer
+Things to do...
+
+========================================================
+
+/Volumes/Data/CODE/hdd_indexer/source/hdd_indexer/urls.py:
+   21      url(r'^crawler/$', 'hdd_indexer.views.crawler', name='crawler'),
+   22      url(r'^loader/$', 'hdd_indexer.views.loader', name='loader'),
+   23:     # TODO: replace urls in index.html and input_alert.js with {{url}}
+   24  )
+   25  
+
+/Volumes/Data/CODE/hdd_indexer/source/hdd_indexer/views.py:
+    9  """
+   10  
+   11: # TODO: refactor validations into separate methods
+   12: # TODO: make validation a method of class
+   13  # HDDRoot.validate(path): True on success, False otherwise
+   14  # if True, assigns the path to HDDRoot.path
+   15  # then we need to call HDDRoot.save() to save the path
+   16: # TODO: check if crawler/loader active and send status to homepage
+   17  
+   18  
+   ..
+  413  
+  414      # tmdb key
+  415:     # TODO: check tmdb key is valid
+  416      tmdb_key = request.POST.get('TMDB_KEY', '')
+  417      print 'tmdb_key:' + tmdb_key
+  ...
+  425  
+  426      # opensub
+  427:     # TODO: check opensub key is valid
+  428      opensub_id = request.POST.get('OpenSubID', '')
+  429      opensub_key = request.POST.get('OpenSubKey', '')
+
+/Volumes/Data/CODE/hdd_indexer/source/hdd_settings/models.py:
+    2  """
+    3  
+    4: # TODO: docstrings
+    5: # TODO: test 'undefined' values are not accepted
+    6  
+    7  from __future__ import unicode_literals
+    .
+  159          relpath(str): relative path of the folder from hdd-root
+  160      """
+  161:     # TODO: Multiple Movie Folders on the hard disk
+  162      relpath = models.CharField(
+  163          max_length=500,
+
+/Volumes/Data/CODE/hdd_indexer/source/movie_metadata/crawl.py:
+   19  from movie_metadata.models import Movie
+   20  
+   21: # TODO: video filetypes as model
+   22: # TODO: movie size threshold as solo object
+   23  _VIDEO_FILETYPES = video_file_extensions = (
+   24      '.264', '.3g2', '.3gp', '.3gp2', '.3gpp', '.3gpp2', '.3mm', '.3p2', '.60d',
+
+/Volumes/Data/CODE/hdd_indexer/source/movie_metadata/load.py:
+   27  """
+   28  
+   29: # TODO: check which service is online and use that
+   30: # TODO: check which fields are empty and fill those
+   31: # TODO: change name `loader` to `loading`
+   32: # TODO: IMDb API for metadata
+   33: # TODO: RT API for metadata
+   34: # TODO: Metacritic API for metadata
+   35: # TODO: see IMDBPie https://github.com/richardasaurus/imdb-pie
+   36: # TODO: see imdbpy http://imdbpy.sourceforge.net
+   37: # TODO: use only if API keys are not empty
+   38: # TODO: use opensub_initiate to get token within threads
+   39  
+   40  from __future__ import unicode_literals
+   ..
+  126      except ProtocolError as e:
+  127          """
+  128:         TODO: gaierror:
+  129              [Errno 8] nodename nor servname provided, or not known
+  130          """
+  ...
+  155      """
+  156      tmdb_set_key(TMDbKey.get_solo().key)
+  157:     # TODO: wrap the entire func in try block
+  158      t_size = 5  # size of thread, and movie queue
+  159      # download job queue
+  ...
+  339      except ProtocolError as e:
+  340          """
+  341:         TODO: gaierror:
+  342              [Errno 8] nodename nor servname provided, or not known
+  343          """
+  ...
+  607      assert type(data) == dict
+  608      movie = {}
+  609:     # TODO: Levenstein similarity of movie title and filename
+  610      movie['title'] = data['Title']
+  611      if data['Released'] != 'N/A':
+  ...
+  683              res = res[0]
+  684          else:
+  685:             # TODO: offer user the choice of movies
+  686              res = res[0]
+  687          movie = tmdb_parse_result(res)
+  ...
+  896      """
+  897      # log('retrieving Rotten Tomatoes rating... API inactive')
+  898:     # TODO: activate when RT api use is approved
+  899      rating = 0
+  900      '''json.load(urllib2.urlopen('
+
+/Volumes/Data/CODE/hdd_indexer/source/movie_metadata/models.py:
+   40      title = models.CharField(max_length=500,)
+   41      release = models.DateField(blank=True, null=True)
+   42:     # TODO: poster = models.ImageField(blank=True,)
+   43      relpath = models.CharField(max_length=500,)
+   44  
+   ..
+  103          """
+  104          self.slug = slugify(self.title)
+  105:         # TODO: check if relpath is a valid file
+  106          return super(Movie, self).save(*args, **kwargs)
+  107  
+
+/Volumes/Data/CODE/hdd_indexer/source/movie_metadata/tests.py:
+  158              m.directors.all() == [] or
+  159              m.imdb_score is None
+  160:             # TODO: add more missing fields
+  161:             # TODO: calculate best JSON source based on missing fields
+  162          ):
+  163:             # TODO: case where IMDb ID is None
+  164              r = load.tmdb3_search_by_imdb_id(m.imdb_id)
+  165              if r is None:
+
+/Volumes/Data/CODE/hdd_indexer/source/setup.py:
+   79      raw_input("Press Enter to continue...")
+   80      # pip install -r requirements.txt
+   81:     # TODO: assert requirements.txt exists
+   82      cmd = ['pip', 'install', '-r', 'requirements.txt']
+   83      # open a subprocess and pipe its output
+   ..
+  132      except User.DoesNotExist:
+  133          # does not exist, therefore let's it
+  134:         # TODO: check if pass can be changed programmatically instead of
+  135          #   deleting the user and creating it again
+  136          pass
+  ...
+  156      # default ip 192.168.0.1
+  157      # default port 8000
+  158:     # TODO: param to open webserver at another address:port
+  159      webbrowser.open('http://localhost:8000/setup')
+  160      for line in p.stdout:
+
+/Volumes/Data/CODE/hdd_indexer/source/tmdb3/tmdb_auth.py:
+  100              if self._authtoken is None:
+  101                  raise TMDBError("No Auth Token to produce Session for")
+  102:             # TODO: check authtoken expiration against current time
+  103              req = Request('authentication/session/new',
+  104                            request_token=self._authtoken)
+
+/Volumes/Data/CODE/hdd_indexer/source/todo.txt:
+   12  __crawl__
+   13  --------------------------------------------------------
+   14: - __TODO__: use better video file recognition
+   15  
+   16  __load__
+   17  --------------------------------------------------------
+   18: - __TODO__: abstract logging module
+   19: - __TODO__: set Rotten Tomatoes API key
+   20: - __TODO__: set logging level for every log message
+   21: - __TODO__: choice when parsed filename has multiple matches
+   22: - __TODO__: download movie poster
+   23  
+   24  ========================================================
+   ..
+   26  __project__
+   27  --------------------------------------------------------
+   28: - __TODO__: logging solution
+   29: - __TODO__: celery or other queing system for loading files
+   30: - __TODO__: profiling
+   31: - __TODO__: settings in admin
+   32  
+
+46 matches across 10 files

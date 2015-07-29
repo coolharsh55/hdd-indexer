@@ -1,0 +1,412 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Help</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/hover-min.css' %}" rel="stylesheet">
+
+        <style type="text/css">
+        .tc {
+            text-align: center;
+        }
+
+        .tile {
+            height:150px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .item-strike {
+            {% if welcome == True %}
+            text-decoration: line-through;
+            color: red;
+            {% endif %}
+        }
+        </style>
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Add your site or application content here -->
+        <div class='container'>
+        <h1 class='tc'>Help<small><br/><a href="{% url 'home' %}">HDD-indexer</a></small></h1>
+
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-quick-start'>
+            <h2 class='hvr-grow-shadow'>Quick Start</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-about'>
+            <h2 class='hvr-grow-shadow'>About</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-browse'>
+            <h2 class='hvr-grow-shadow'>Browse Movies</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-comparator'>
+            <h2 class='hvr-grow-shadow'>Comparator</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-crawler'>
+            <h2 class='hvr-grow-shadow'>Crawler</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-database'>
+            <h2 class='hvr-grow-shadow'>Database</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-exporter'>
+            <h2 class='hvr-grow-shadow'>Exporter</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-loader'>
+            <h2 class='hvr-grow-shadow'>Loader</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-managepy'>
+            <h2 class='hvr-grow-shadow'>manage.py</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-organizer'>
+            <h2 class='hvr-grow-shadow'>Organizer</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-server'>
+            <h2 class='hvr-grow-shadow'>Server</h2>
+        </div>
+        <div class="tc tile col-xs-3 col-sm-3 col-md-3 col-lg-3" data-toggle='modal' data-target='#modal-settingsinfo'>
+            <h2 class='hvr-grow-shadow'>Settings</h2>
+        </div>
+
+        <div class="modal fade" id="modal-quick-start">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Quick Start</h4>
+                    </div>
+                    <div class="modal-body">
+                    <ul class="list-group">
+                        {% if welcome == True %}
+                        <div class='alert alert-info alert-dismissable tc' role='a'>Welcome to HDD-indexer.</div>
+                        {% endif %}
+                        <li class="list-group-item item-strike">
+                            <span class="badge">1</span>
+                            Start the server with <strong>python manage.py</strong>
+                        </li>
+                        <li class="list-group-item item-strike">
+                            <span class="badge">2</span>
+                            Open <strong>localhost:8000</strong> in your browser
+                        </li>
+                        <li class="list-group-item item-strike">
+                            <span class="badge">3</span>
+                            Configure <strong>settings</strong> if required to make sure your <strong>HDD Root</strong> is configured properly according to the attached HDD. <br />
+                            On *NIX, it will be something like <i>/Volumes/HDD</i>;<br />
+                            On Windows, it will be a drive letter like <i>G:</i>.
+                        </li>
+                        <li class="list-group-item item-strike">
+                            <span class="badge">4</span>
+                            The <strong>Movie Folder</strong> path is the directory containing your movies. Make sure the path is correct, and that it is a subdirectory of the HDD Root.
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">5</span>
+                            Start <strong>crawler</strong>, and wait while it identifies movies stored in your movie folder.
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">6</span>
+                            Start <strong>loader</strong>, and wait while it fetches metadata from online sources. It uses multi-threading, so you may experience a slight performance loss.
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">7</span>
+                            You can now <strong>browse movies</strong> and its related metadata at <strong>localhost:8000/admin/movies/</strong>.<br />
+                            Use the username and password given to you during the setup. Once logged in, you can click on movies to access its metadata.
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-about">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">About HDD-indexer</h4>
+                    </div>
+                    <div class="modal-body">
+                    HDD-indexer is an utility that indexes a hard disk's contents, and allows the user to view it using organisation based on its metadata.<br />
+                    Currently, it supports only movie files, and downloading related metadata from online sources. <br />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-browse">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Browse Movies</h4>
+                    </div>
+                    <div class="modal-body">
+                        The <strong>browse</strong> module allows viewing of identified movies based on organisation based on their metadata. It uses a combination of dynamic webpages and django's admin interface to allow you to view stored metadata.<br />
+                        If using the <i>admin</i> interface, use the <strong>username</strong> and <strong>password</strong> generated for you during the setup.<br />
+                        Browsing the movies is simple. You are shown a list of movies by default. You can filter it using various paremeters such as release date, director, and actor. Sorting is also supported based on date, cast and crew, and ratings.<br />
+                        If you need to edit a particular movie, you can do so by clicking on it, and changing the information on the form generated for you.<br />
+                        <div class='alert alert-warning alert-dismissable tc' role='a'>Please be careful when changing data, since the system assumes you know what you are doing, and its effects.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-comparator">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Comparator</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class='alert alert-danger alert-dismissable tc' role='a'>not implemented yet</div>
+                        The contents of two remote or local disks can be compared with the Comparator module. <br />
+                        It can match movies on different disks, and create a list of movies that are missing on the current disk which can be <i>borrowed</i> from the other disk. <br />
+                        Alternatively, it can create a <i>lend</i> list for movies present on the current disk, which is absent on the other disk.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-crawler">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Crawler</h4>
+                    </div>
+                    <div class="modal-body">
+                        The crawler looks for movies on the hard disk based on file extensions and file size. <br />Identified movies are saved to the database along with their relative path from the movie folder.<br />
+                        Running the crawler can take time if there are a large number of files and folders to assess.<br />
+                        Movies identified through the crawler have their title set to the filename minus the extenion, and their relative path set to their file path.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-database">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Database</h4>
+                    </div>
+                    <div class="modal-body">
+                        HDD-indexer uses a locally stored <strong>SQLite</strong> database, named <strong>db.sqlite3</strong> situated in the <strong>hdd_indexer</strong> folder.<br />
+                        This database can be accessed and modified by any other process or program if required.<br />
+                        The database contains all the program data and settings. If you wish to backup these, you can simply copy the database to another location.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-exporter">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Exporter</h4>
+                    </div>
+                    <div class="modal-body">
+                    <div class='alert alert-danger alert-dismissable tc' role='a'>not implemented yet</div>
+                        The <strong>Exporter</strong> module can be used to export a list of movies in database and on disk.<br />
+                        The exported list can be saved in many formats, such as <i>csv, txt, json, xml, pdf, binary, etc.</i>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-loader">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Loader</h4>
+                    </div>
+                    <div class="modal-body">
+                        The <strong>Loader</strong> module is used for downloading metadata from online source for movies in database.<br />
+                        It uses <strong>TMDb v3, OMDb,</strong> and <strong>OpenSubtitles</strong> to retrieve movie information.<br />
+                        <strong>TMDb,</strong> and <strong>OMDb</strong> are online movie databases that provide metadata such as title, release date, cast, crew, ratings, etc.<br />
+                        <strong>OpenSubtitles</strong> is used to retrieve the IMDb ID if it cannot be identified by other services. The other metadata is downloaded from other services based on the identified IMDb ID.<br />
+                        <div class='alert alert-warning alert-dismissable tc' role='a'>can take substantial amount of time</div>
+                        The loader can take a substantial amount of time for downloading metadata. This is normal since requests to external services take time, and are based on the speeds of your internet connection and DNS.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-managepy">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">manage.py</h4>
+                    </div>
+                    <div class="modal-body">
+                        The <strong>manage.py</strong> is a django command (file/module) that allows you to run the server, interact with the database, open a shell for interactions, and lots more. <br />
+                        To use this, type <strong>python manage.py</strong> followed by the <strong>subcommand/help</strong><br />
+                        Some useful options:
+                        <ul>
+                        <li><strong>runserver:</strong> start the server at localhost:8000 (can be changed through options)</li>
+                        <li><strong>migrate:</strong> create and make changes to the database based on changes in the models code</li>
+                        <li><strong>shell:</strong> start a local shell which has all project settings loaded</li>
+                        <li><strong>createsuperuser:</strong> create an admin user</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-organizer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Organizer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class='alert alert-danger alert-dismissable tc' role='a'>not implemented yet</div>
+                        The <strong>Organizer</strong> module can move and arrange the file on disk based on their metadata.<br />
+                        For example, the movies can be automatically put into folders based on genre, directors, or year.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-server">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Server</h4>
+                    </div>
+                    <div class="modal-body">
+                        The server is run as a <strong>django</strong> program at default settings of <strong>192.168.0.1:8000</strong>.<br />
+                        In case of port clash, please specify another port when starting the server with <strong>python manage.py runserver</strong><br />
+                        Sometimes, the server process does not exit as expected, and exists as a background or a ghost process. In such cases, find and terminate this process before starting it again.
+                        <div class='alert alert-warning alert-dismissable tc' role='a'>The server will accept requests from other programs or applications. This can be useful for modifications, but is also potentially hazardous based on use.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-settingsinfo">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Settings</h4>
+                    </div>
+                    <div class="modal-body">
+                        The <strong>Settings</strong> section allows you to change settings such as <strong>HDD Name, Root Path,</strong> and <strong>Movie Folder path.</strong><br />
+                        The settings changed are first validated before being updated in the database.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+        <!-- jQuery -->
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col col-md-4">
+                        <p><i class='fa fa-bullhorn fa-2x'></i><br />share the good work</p>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="http://www.facebook.com/sharer/sharer.php?u=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://plus.google.com/share?url=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="http://twitter.com/share?url=http://brainbank.harshp.com/hdd-indexer/&text=check%20out%20hdd-indexer%20at%20harshp.com&via=coolharsh55" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-code fa-2x"></i><br />developed by <strong>coolharsh55</strong><br><a href="http://brainbank.harshp.com/hdd-indexer">hdd-indexer at brainbank.harshp.com</a><br>read the blog, dev notes, and ideas</p>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-envelope-o fa-2x"></i><br /><a href="mailto:hdd-indexer@harshp.com?subject=bug:&body=Hi, I found a bug in hdd-indexer!" target="_blank" class="share-btn email hvr-pulse-grow">file a bug</a><br>we'll try to fix it<br>maybe come up with better features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Changelog | Privacy policy | Dev notes
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </footer>
+
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript">
+
+        $(window).load(function(){
+            {% if welcome == True %}
+            $('#modal-quick-start').modal('show');
+            {% endif %}
+        });
+    </script>
+
+    </body>
+</html>

@@ -1,0 +1,17 @@
+Changelog
+=========
+
+__future__
+----------
+
+New
+~~~
+
+- Initial commit v0.1. [Harshvardhan Pandit]
+
+Other
+~~~~~
+
+- Initial commit. [coolharsh55]
+
+

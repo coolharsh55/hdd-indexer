@@ -1,0 +1,323 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>HDD-indexer</title>
+
+    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+    <link href="{% static 'css/google.css' %}" rel="stylesheet">
+    <link href="{% static 'css/hover-min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/jquery.jWizard.min.css' %}" rel="stylesheet">
+    <style type="text/css">
+        .sticky {
+            position: -webkit-sticky;
+            position: -moz-sticky;
+            position: -o-sticky;
+            position: -ms-sticky;
+            position: sticky;
+            top: 1px;
+            z-index: 1;
+        }
+        .site {
+            color: white;
+            text-shadow: black 1px 1px 10px;
+        }
+        .not-ready {
+            color:#FF3300;
+        }
+        .well {
+            color: #000;
+        }
+        .hvr-icon-bounce:before {
+            content: "\f05a";
+        }
+        .help {
+            position: fixed;
+            top:100px;
+            right: 75px;
+        }
+        #box{
+            position:absolute;
+            width: 100%;
+            height: 80%;
+            overflow:auto;
+            border: solid lightgray 1px;
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="index">
+    <nav class='navbar navbar-default text-center sticky'><h1 class='site'>hdd-indexer</h1></nav>
+
+    <p class='help'><a target='blank' href="{% url 'help' %}"><i class='fa fa-question fa-2x'></i>need help?</a></p>
+
+    <div class='container'>
+
+    <div id='accordion' class='panel-group'>
+
+    <!-- Browse -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #FF3300 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-browse" aria-expanded="false" aria-controls="collapse-browse">Browse</a><p><small>browse through movies on disk</small></p>
+            </h2>
+        </div>
+        <div id="collapse-browse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class="list-group">
+                    <p><a class='hvr-grow-rotate' href='{{site}}/admin/movie_metadata/movie'>browse Movies</a></p>
+                    <p><a class='hvr-grow-rotate' href='{{site}}/admin/movie_metadata/actor'>browse Actors</a></p>
+                    <p><a class='hvr-grow-rotate' href='{{site}}/admin/movie_metadata/director'>browse Directors</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparator -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #FF6600 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-comparator" aria-expanded="false" aria-controls="collapse-comparator"><i class='fa fa-exclamation-triangle not-ready'></i> Comparator</a><p><small>compare disk contents with another remote or local disk</small></p>
+            </h2>
+        </div>
+        <div id="collapse-comparator" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crawler -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style='text-shadow: #FFFF00 2px 2px 10px;' data-toggle="collapse" data-parent="#accordion" href="#collapse-crawler" aria-expanded="false" aria-controls="collapse-crawler">Crawler</a><p><small>search for movie files on disk</small></p>
+            </h2>
+        </div>
+        <div id="collapse-crawler" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class="list-group">
+                    <h4><span id='crawler-status'></span> <i id='crawler-status-info' class='fa fa-2x fa-spinner fa-pulse'></i></h4>
+                </div>
+                <div id='crawler-crawl-status' class="list-group">
+                    <p>files evaluated<br /><span id='crawler-files-evaluated'></span></p>
+                    <p>movies found<br /><span id='crawler-movies-found'></span></p>
+                    <p>movies added<br /><span id='crawler-movies-added'></span></p>
+                </div>
+                <div class="list-group">
+                    <button id='crawler-switch' type="button" class="btn hvr-grow">Start Crawling</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exporter -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #33FF33 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-exporter" aria-expanded="false" aria-controls="collapse-blog"><i class='fa fa-exclamation-triangle not-ready'></i> Exporter</a><p><small>export movies and/or metadata</small></p>
+            </h2>
+        </div>
+        <div id="collapse-exporter" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style='text-shadow: #3333FF 2px 2px 10px;' data-toggle="collapse" data-parent="#accordion" href="#collapse-loader" aria-expanded="false" aria-controls="collapse-blog">Loader</a><p><small>load movie metadata from online sources</small></p>
+            </h2>
+        </div>
+        <div id="collapse-loader" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class="list-group">
+                    <h4><span id='loader-status'></span> <i id='loader-status-info' class='fa fa-2x fa-spinner fa-pulse'></i></h4>
+                </div>
+                <div id='loader-load-status' class="list-group">
+                    <p>Movies Evaluated<br /><span id='loader-movies-evaluated'></span></p>
+                    <p>Metadata Downloaded<br /><span id='loader-metadata-downloaded'></span></p>
+                    <p>Movies Skipped<br /><span id='loader-movies-skipped'></span></p>
+                </div>
+                <div class="list-group">
+                    <button id='loader-switch' type="button" class="btn hvr-grow">Start Loading</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organizer -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #9900FF 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-organizer" aria-expanded="false" aria-controls="collapse-blog"><i class='fa fa-exclamation-triangle not-ready'></i> Organizer</a><p><small>organize disk contents by metadata</small></p>
+            </h2>
+        </div>
+        <div id="collapse-organizer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class='panel text-center'>
+        <div id='settings' class='panel-heading' role='tab'>
+            <h2 class="panel-title">
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #FF0066 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-settings" aria-expanded="false" aria-controls="collapse-blog">Settings</a><p><small>click to change</small></p>
+            </h2>
+        </div>
+        <div id="collapse-settings" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
+            <div class="panel-body">
+                <div class="list-group">
+                    <div class='well hvr-underline-reveal'><p><a href='#settings-hdd-name' data-toggle='modal'><i id='hdd_name_info' class='fa fa-info-circle fa-2x hvr-pulse'></i></a><strong> HDD Name: </strong></p><p class='hvr-back-pulse' id='hdd-name'>{{hdd_name}}</p></div>
+                    <div class='well hvr-underline-reveal'><p><a href='#settings-hdd-root' data-toggle='modal'><i id='hdd_root_info' class='fa fa-info-circle fa-2x hvr-pulse'></i></a><strong> HDD Root: </strong></p><p><span class='hvr-back-pulse' id='hdd-root'>{{hdd_root}}</span></p></div>
+                    <div class='well hvr-underline-reveal'><p><a href='#settings-movie-folder' data-toggle='modal'><i id='movie_folder_info' class='fa fa-info-circle fa-2x hvr-pulse'></i></a><strong> Movie Folder: </strong></p><p><span class='hvr-back-pulse' id='movie-folder'>{{movie_folder}}</span></p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col col-md-4">
+                        <p><i class='fa fa-bullhorn fa-2x'></i><br />share the good work</p>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="http://www.facebook.com/sharer/sharer.php?u=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://plus.google.com/share?url=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="http://twitter.com/share?url=http://brainbank.harshp.com/hdd-indexer/&text=check%20out%20hdd-indexer%20at%20harshp.com&via=coolharsh55" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-code fa-2x"></i><br />developed by <strong>coolharsh55</strong><br><a href="http://brainbank.harshp.com/hdd-indexer">hdd-indexer at brainbank.harshp.com</a><br>read the blog, dev notes, and ideas</p>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-envelope-o fa-2x"></i><br /><a href="mailto:hdd-indexer@harshp.com?subject=bug:&body=Hi, I found a bug in hdd-indexer!" target="_blank" class="share-btn email hvr-pulse-grow">file a bug</a><br>we'll try to fix it<br>maybe come up with better features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Changelog | Privacy policy | Dev notes
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </footer>
+
+    <!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="settings-hdd-name" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2><i class="fa fa-cogs fa-f2x"></i> Settings - HDD Name</h2>
+                            <p><strong>Current value:</strong> {{hdd_name}}</p>
+                            <p>The semantic name for the current disk used to identify the disk on remote instances.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="portfolio-modal modal fade" id="settings-hdd-root" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2><i class="fa fa-cogs fa-f2x"></i> Settings - HDD Root</h2>
+                            <p><strong>Current value:</strong> {{hdd_root}}</p>
+                            <p>The path of the HDD on the current system. May differ across machines and must always be checked when running HDD-indexer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="portfolio-modal modal fade" id="settings-movie-folder" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2><i class="fa fa-cogs fa-f2x"></i> Settings - Movie Folder</h2>
+                            <p><strong>Current value:</strong> {{movie_folder}}</p>
+                            <p>The path containing the movie files, which is stored relative to the HDD Root. The path is preserved across systems and operating systems and does not need to be changed as long as the movie folder remains consistent on the disk.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'js/sweetalert.min.js' %}"></script>
+    <script src="{% static 'js/input_alert.js' %}"></script>
+    <script src="{% static 'js/jquery.jWizard.min.js' %}"></script>
+
+</body>
+
+</html>

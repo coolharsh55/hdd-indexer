@@ -1,0 +1,164 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HDD-indexer: Setup</title>
+
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+        <link href="{% static 'css/google.css' %}" rel="stylesheet">
+        <link href="{% static 'css/hover-min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/jquery-ui.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/jquery-ui.structure.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/jquery.jWizard.min.css' %}" rel="stylesheet">
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+    <div class='container'>
+
+        <form id="wizard" method="POST">
+
+        <fieldset><legend>Key</legend><div class='form-group'>
+        <h2>Registration Key</h2>
+        <input type="text" name="RegistrationKey" id="inputRegistrationKey" class="form-control" value="{{registration_key}}" required="required" pattern="" title="Registration Key">
+        <p><small>Enter the registration key you received for using hdd-indexer. You can acquire one <a style='color:#F0F;' href='http://hdd-indexer.harshp.com/'>here</a></small></p>
+        </div></fieldset>
+
+        <fieldset><legend>HDDName</legend><div class='form-group'>
+        <h2>HDD Name</h2>
+        <p><small>A semantic name used to identify this disk when connecting to a remote system or calculating a diff against another local or external disk. A concise, and meaningful name is easy to remember and identify.</small></p>
+        <p><small>valid characters are letters a-z, digits 0-9, underscore _, and dash -</small></p>
+        <input type="text" name="HDDName" id="inputHDDName" class="form-control" value="{{hdd_name}}" required="required" pattern="" title="HDD Name">
+        </div></fieldset>
+
+        <fieldset><legend>HDDRoot</legend><div class='form-group'>
+        <h2>HDD Root</h2>
+        <input type="text" name="HDDRoot" id="inputHDDRoot" class="form-control" value="{{hdd_root}}" required="required" pattern="" title="HDD Root">
+        </div></fieldset>
+
+        <fieldset><legend>Movie Folder</legend><div class='form-group'>
+        <h2>Movie Folder</h2>
+        <input type="text" name="MovieFolder" id="inputMovieFolder" class="form-control" value="{{movie_folder}}" required="required" pattern="" title="Movie Folder">
+        </div></fieldset>
+
+        <fieldset>
+        <legend><h2>API keys</h2></legend>
+        <div class="form-group">
+            <h3>OpenSubtitles</h3>
+            <p><small>Enter the id and API key for using the Open Subtitles plugin. You can acquire one <a style='color:#F0F;' href='http://www.opensubtitles.org/en/newuser'>here</a></small></p>
+            <label for="inputOpenSubId" class="col-sm-2 control-label">id:</label>
+            <div class="col-sm-10">
+                <input type="text" name="OpenSubID" id="inputOpenSubId" class="form-control" value="{{opensub_id}}" required="required" pattern="" title="enter the Open Subtitles ID">
+            </div>
+            <label for="inputOpenSub" class="col-sm-2 control-label">key:</label>
+            <div class="col-sm-10">
+                <input type="text" name="OpenSubKey" id="inputOpenSub" class="form-control" value="{{opensub_key}}" required="required" pattern="" title="enter the Open Subtitles API key"><br>
+            </div>
+        </div>
+        <div class='form-group'>
+        <p><br></p>
+            <h3>TMDb v3</h3>
+            <p><small>Enter the API key for using the TMDb v3 API. You can acquire one <a style='color:#F0F;' href='https://www.themoviedb.org/account/signup'>here</a></small></p><br>
+            <label for="inputTMDb" class="col-sm-2 control-label">TMDb:</label>
+            <div class="col-sm-10">
+                <input type="text" name="TMDB_KEY" id="inputTMDb" class="form-control" value="{{tmdb_key}}" required="required" pattern="" title="enter the TMDb API key">
+
+            </div>
+        </div>
+        </fieldset>
+
+        <fieldset><legend>Terms and Conditions</legend>
+        <div class='form-group'>
+        <h2>Terms and Conditions</h2>
+        <p><strong>BY CLICKING FINISH YOU AGREE TO THE FOLLOWING TERMS AND CONDITIONS:</strong><br>This program is a utility made available to use free of cost, and is free to use for non-commercial purposes. This utility allows you to index files on your hard disk based on metadata. The ownership and responsibility of these files is upto you. This utility offers no guarentee of operations, and all uses made are at the risk of the user.</p>
+        </div></fieldset>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col col-md-4">
+                        <p><i class='fa fa-bullhorn fa-2x'></i><br />share the good work</p>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="http://www.facebook.com/sharer/sharer.php?u=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://plus.google.com/share?url=http://brainbank.harshp.com/hdd-indexer/" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="http://twitter.com/share?url=http://brainbank.harshp.com/hdd-indexer/&text=check%20out%20hdd-indexer%20at%20harshp.com&via=coolharsh55" class="btn hvr-radial-out btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-code fa-2x"></i><br />developed by <strong>coolharsh55</strong><br><a href="http://brainbank.harshp.com/hdd-indexer">hdd-indexer at brainbank.harshp.com</a><br>read the blog, dev notes, and ideas</p>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <p><i class="fa fa-fw fa-envelope-o fa-2x"></i><br /><a href="mailto:hdd-indexer@harshp.com?subject=bug:&body=Hi, I found a bug in hdd-indexer!" target="_blank" class="share-btn email hvr-pulse-grow">file a bug</a><br>we'll try to fix it<br>maybe come up with better features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Changelog | Privacy policy | Dev notes
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </footer>
+
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'js/sweetalert.min.js' %}"></script>
+    <script src="{% static 'js/jquery.jWizard.min.js' %}"></script>
+    <script src="{% static 'js/jquery.validate.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            // check for errors from server
+            {% if error == True %}
+                swal('Validation Error', '{{err_msg}}', 'error');
+            {% endif %}
+
+            //
+            $('#wizard')
+            .on('stephide', 'fieldset', function(){
+                if (!$(this).find(":input").valid()) {
+                    swal("Input Error!", "Please ensure all fields are filled in correctly.", "error");
+                    return false;
+                }
+            })
+            .jWizard({
+                buttons: {
+                    cancel: false,
+                }
+            })
+            .validate();
+        });
+    </script>
+    </body>
+</html>

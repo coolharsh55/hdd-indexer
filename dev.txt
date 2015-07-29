@@ -1,0 +1,52 @@
+HDD Indexer dev notes
+========================================================
+
+--------------------------------------------------------
+__Loader__
+
+- download only missing fields
+    + calculate score based on missing fields
+    + decide which service to query based on score
+    
+    if IMDb_ID:
+        if ratings are missing
+            use omdb
+        if title, release date, cast and crew are missing
+            use tmdb
+    else:
+        use opensub to get imdb id
+        start again
+
+--------------------------------------------------------
+__Testing__
+
+- Find and configure a testing solution
+- How to test files, apis remotely?
+- validation tests
+- when internet is connected/disconnected
+- selenium test for interactions
+
+--------------------------------------------------------
+__apis__
+- check if tmdb api key is valid
+- check if tmdb service is online
+- check if opensub api key is valid
+- check if opensub service is online
+
+--------------------------------------------------------
+__code review__
+- find a code review solution
+- use strict pep8/flake/lint conventions in code
+
+--------------------------------------------------------
+__remote server__
+- design a remote server based on requirements
+- see if flask + app engine can fulfill requirements
+- map GET/POST requests
+- check what requires authentication
+- check which database is sufficient
+- check available space and how many users/hdd data can be stored
+- check if this database would be illegal
+- user registration for hdd
+
+========================================================
