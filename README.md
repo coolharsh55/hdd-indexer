@@ -27,10 +27,11 @@ The project requires **python2.7** to be installed. It has not been tested on *p
 - Django==1.8.2
 - django-grappelli==2.6.5
 - django-solo==1.1.0
+- tmdb3==0.7.2
 
-###### Manually download and add to project
-- [pytmdb3](https://github.com/wagnerrp/pytmdb3)
+###### Manually download python-opensubtitles
 - [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles)
+- using git: ```git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && rm -rf python-opensubtitles/.git```
 
 ### Installing
 1. Download the project
