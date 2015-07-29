@@ -1,4 +1,5 @@
 # HDD-indexer
+[![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer)
 
 **hdd-indexer** is an utility that indexes the contents of a hard disk, and allows viewing and interacting with it based on **metadata**. Currently, it supports only *video* files, specifically *movies*.
 
@@ -30,12 +31,17 @@ The project requires **python2.7** to be installed. It has not been tested on *p
 - tmdb3==0.7.2
 
 ###### Manually download python-opensubtitles
-- [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles)
-- using git: ```git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && rm -rf python-opensubtitles/.git```
+Download the library from [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles) and movie the **pythonopensubtitles** folder to the project directory,
+
+*OR*
+
+using git: 
+
+```git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && mv python-opensubtitles/pythonopensubtitles ./ && rm -rf python-opensubtitles```
 
 ### Installing
 1. Download the project
-2. Make sure you have downloaded the *pytmdb3* and *python-opensubtitles* into the project directory.
+2. Make sure you have downloaded the *python-opensubtitles* into the project directory.
 3. Start the setup using ```python setup.py```
 4. It will **fail** if there is *no internet connectivity*.
 5. It will install dependencies via *pip*
