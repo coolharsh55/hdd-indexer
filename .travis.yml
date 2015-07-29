@@ -7,7 +7,12 @@ env:
 install:
   - pip install -r requirements.txt
   - git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && mv python-opensubtitles/pythonopensubtitles ./ && rm -rf python-opensubtitles
+  - pip install coveralls
 before_script:
   - python manage.py migrate
 script:
-  - python manage.py test
+  - coverage run --source=hdd_indexer manage.py test
+after_success:
+  - coveralls
+notifications:
+  slack: hdd-indexer:zRKwAkHj7rkJaUY3wlUsYdz5

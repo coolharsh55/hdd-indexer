@@ -1,0 +1,17 @@
+[run]
+branch = True
+source = hdd_indexer
+
+omit =
+    /*/migration*
+    /*/tests*
+    __*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+
+ignore_errors = True
