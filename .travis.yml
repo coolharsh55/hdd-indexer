@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+services: mysql
+env:
+  - DJANGO=1.8.2 DJANGO_SETTINGS_MODULE="hdd_indexer.settings"
+install:
+  - pip install -r requirements.txt
+  - git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && mv python-opensubtitles/pythonopensubtitles ./ && rm -rf python-opensubtitles
+before_script:
+  - python manage.py migrate
+script:
+  - python manage.py test
