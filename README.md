@@ -1,5 +1,5 @@
 # HDD-indexer
-[![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer)
+[![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer) [![Coverage Status](https://coveralls.io/repos/coolharsh55/hdd-indexer/badge.svg?branch=coveralls&service=github)](https://coveralls.io/github/coolharsh55/hdd-indexer?branch=coveralls)
 
 **hdd-indexer** is an utility that indexes the contents of a hard disk, and allows viewing and interacting with it based on **metadata**. Currently, it supports only *video* files, specifically *movies*.
 
