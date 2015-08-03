@@ -2,7 +2,7 @@
 
     The load module uses OpenSubtitles to try and identify movie
     and get it's IMDb ID. If this cannot be retrieved, it uses
-    the filename to perform a movie-title search using external API.
+    the filename to perform a movie_title search using external API.
     If the IMDb ID cannot be retrieved, the movie is considered as
     skipped by the load module. Using the retrived IMDb ID, load
     downloads movie metadata from online sources. It currently
@@ -38,22 +38,29 @@
 # TODO: use opensub_initiate to get token within threads
 
 from __future__ import unicode_literals
-from datetime import datetime
+
 from os import path
-from pythonopensubtitles.opensubtitles import OpenSubtitles
-from pythonopensubtitles.utils import File
-from xmlrpclib import ProtocolError
-from hdd_settings.models import HDDRoot
-from hdd_settings.models import MovieFolder
-from movie_metadata.models import Movie
-# from hdd_settings.models import TMDbKey
-from hdd_settings.models import OpenSubKey
-from movie_metadata.movie import save as movie_save
+from datetime import datetime
 import json
 import Queue
 from threading import Thread
+from threading import Lock
 import urllib2
 import re
+from xmlrpclib import ProtocolError
+import logging
+import traceback
+
+from pythonopensubtitles.opensubtitles import OpenSubtitles
+from pythonopensubtitles.utils import File
+import tmdbsimple as tmdb
+
+from hdd_settings.models import HDDRoot
+from hdd_settings.models import MovieFolder
+from movie_metadata.models import Movie
+from hdd_settings.models import TMDbKey
+from hdd_settings.models import OpenSubKey
+from movie_metadata.movie import save as movie_save
 
 
 _ERROR = {
@@ -62,6 +69,10 @@ _ERROR = {
 }
 """Crawler Error messages
 """
+
+log = logging.getLogger('load')
+log.info(72 * '-')
+log.info("load module loaded")
 
 
 def loader_status(key=None, value=None):
@@ -76,6 +87,7 @@ def loader_status(key=None, value=None):
 
     """
     if 'status' not in loader_status.__dict__:
+        loader_status.lock = Lock()
         loader_status.status = {
             'STATUS': False,
             'MOVIES_EVALUATED': 0,
@@ -86,53 +98,17 @@ def loader_status(key=None, value=None):
     _LOADER = loader_status.status
     if _LOADER.get(key) is not None:
         if value is not None:
-            _LOADER[key] = value
+            if key == 'SKIPPED_LIST':
+                with loader_status.lock:
+                    _LOADER['SKIPPED_LIST'].append(value)
+                log.debug('%s added to skipped list' % value)
+            else:
+                with loader_status.lock:
+                    _LOADER[key] = value
+                log.debug('status: %s -> %s' % (key, value))
         else:
             return _LOADER[key]
     return _LOADER['STATUS']
-
-
-def opensub_initiate():
-    """OpenSubtitlies initiation for use
-
-    Login to OpenSubtitlies using API to retrieve a token
-    for identifying movies.
-
-    Failure results in a null token.
-    Network errors are caused to service unavailability, or DNS problems
-
-    Args:
-        None
-
-    Returns:
-        token(str): Authentication Token for OpenSubtitles
-        None: if token cannot be validated
-
-    Raises:
-        None
-    """
-    sub = OpenSubtitles()
-    try:
-        # login to opensub using API
-        token = sub.login(OpenSubKey.get_solo().uid, OpenSubKey.get_solo().key)
-        if token:
-            return sub
-    except AssertionError as e:
-        print 'Failed to authenticate opensubtitles login.'
-        print e
-    except ProtocolError as e:
-        """
-        TODO: gaierror:
-            [Errno 8] nodename nor servname provided, or not known
-        """
-        if e.errcode == 503:
-            # ProtocolError - 503 Service Unavailable
-            print 'Check network connection and try again.'
-            print e.errmsg
-    except Exception as e:
-        # Other errors
-        print 'Network error.'
-        print e
 
 
 def _run():
@@ -151,15 +127,15 @@ def _run():
         None
     """
     # TODO: wrap the entire func in try block
+    tmdb.API_KEY = TMDbKey.get_solo().key
     t_size = 5  # size of thread, and movie queue
     # download job queue
     q = Queue.LifoQueue()
     # movies to be saved to database
     m = Queue.Queue()
     # skipped movies
-    s = []
     movies = list(Movie.objects.all())
-    print 'movies in db: ', len(movies)
+    log.info('started load run with %s movies' % len(movies))
     m_start = 0
     loader_status('MOVIES_EVALUATED', 0)
     loader_status('METADATA_DOWNLOADED', 0)
@@ -171,11 +147,13 @@ def _run():
             break
         for movie in m_list:
             # initialize the job queue
+            log.debug('%s queued' % movie.title)
             q.put(movie)
 
-        for i in range(5):
+        log.debug('starting %s threads' % t_size)
+        for i in range(t_size):
             # start threads
-            thread = Thread(target=_load, args=(q, m, s))
+            thread = Thread(target=_load, args=(q, m))
             thread.daemon = True
             thread.start()
 
@@ -192,19 +170,25 @@ def _run():
             movie.delete()
             try:
                 movie_save(data)
+                log.info('%s saved to database' % data['title'])
             except Exception:
-                s.append(movie.title)
-                movie.save()
-
+                log.error('error saving %s to database.' % data['title'])
+                log.error(traceback.format_exc())
+                loader_status('SKIPPED', movie.title)
+                log.debug('%s put in skipped list' % movie.title)
+                # movie.save()
             m.task_done()
+
+        log.info('%s items processed of %s' % (
+            len(m_list) + m_start, len(movies)
+        ))
         m_start += t_size
         m_list = movies[m_start:m_start + t_size]
 
-    loader_status('SKIPPED_LIST', s)
     loader_status('STATUS', False)
 
 
-def _load(q, m, s):
+def _load(q, m):
     """Load metadata from online sources
 
     Gets a movie from the job q,
@@ -214,7 +198,6 @@ def _load(q, m, s):
     Args:
         q(Queue): movie object queue to be processed
         m(Queue): movie object queue to be saved
-        s(List): movies skipped
 
     Returns:
         None
@@ -225,24 +208,32 @@ def _load(q, m, s):
     while not q.empty():
         if not loader_status('STATUS'):
             # loader has been turned off
+            log.info('loader turned off, dumping movies in queue')
             while not q.empty():
-                q.get()
+                movie = q.get()
+                log.info('%s dumped' % movie.title)
                 q.task_done()
             return
         # get a movie object from q
         movie = q.get()
+        log.debug('processing movie: %s' % movie.title)
 
         data = None
         if movie.imdb_id is not None:
             # get metadata by imdb id
+            log.debug('movie: %s by imdb id: %s' % (
+                movie.title, movie.imdb_id)
+            )
             data = movie_metadata_by_imdb_id(movie.imdb_id)
         if data is None:
             # get metadata by title (or filename)
             # can also mean imdb id is not available
+            log.debug('movie: %s by title' % movie.title)
             data = movie_metadata_by_title(movie.title)
         if data is not None:
             # movie has metadata
             data['relpath'] = movie.relpath
+            log.info('movie: %s metadata received' % movie.title)
             m.put((movie, data))
             loader_status(
                 'MOVIES_EVALUATED',
@@ -259,6 +250,7 @@ def _load(q, m, s):
             if imdb_id is None:
                 # opensub could not identify the movie
                 # print movie.title, ' SKIPPED.'
+                log.warning('movie: %s skipped' % movie.title)
                 loader_status(
                     'MOVIES_EVALUATED',
                     loader_status('MOVIES_EVALUATED') + 1
@@ -267,15 +259,67 @@ def _load(q, m, s):
                     'MOVIES_SKIPPED',
                     loader_status('MOVIES_SKIPPED') + 1
                 )
-                s.append(movie.title)
+                loader_status('SKIPPED_LIST', movie.title)
 
             else:
                 # opensub identified movie
                 movie.imdb_id = imdb_id
+                log.info('movie: %s got opensub imdb id: %s' % (
+                    movie.title, movie.imdb_id
+                ))
                 # put it back in the queue to download its metadata
                 # the next time a thread retrieves it
                 q.put(movie)
         q.task_done()
+
+
+def opensub_initiate():
+    """OpenSubtitles initiation for use
+
+    Login to OpenSubtitles using API to retrieve a token
+    for identifying movies.
+
+    Failure results in a null token.
+    Network errors are caused to service unavailability, or DNS problems
+
+    Args:
+        None
+
+    Returns:
+        token(str): Authentication Token for OpenSubtitles
+        None: if token cannot be validated
+
+    Raises:
+        None
+    """
+    try:
+        # login to opensub using API
+        sub = OpenSubtitles()
+        token = sub.login(OpenSubKey.get_solo().uid, OpenSubKey.get_solo().key)
+        if not token:
+            # return sub
+            print 'null token'
+            log.error('open sub null token')
+            return
+        return sub
+    except ProtocolError as e:
+        # most likely network error or API server error
+        print "E: " + str(e)
+    except AssertionError:
+        print 'Failed to authenticate opensubtitles login.'
+    except ProtocolError as e:
+        """
+        TODO: gaierror:
+            [Errno 8] nodename nor servname provided, or not known
+        """
+        if e.errcode == 503:
+            # ProtocolError - 503 Service Unavailable
+            print 'Check network connection and try again.'
+        log.error('open sub error occured')
+        log.error(traceback.format_exc())
+    except Exception:
+        log.error('open sub error occured')
+        log.error(traceback.format_exc())
 
 
 def opensub(relpath):
@@ -293,13 +337,20 @@ def opensub(relpath):
     Raises:
         None
     """
-    sub = OpenSubtitles()
+    if 'sub' not in opensub.__dict__:
+        with Lock():
+            sub = opensub_initiate()
+            if sub:
+                opensub.sub = sub
+
+    sub = opensub.sub
     try:
         # login to opensub using API
         token = sub.login(OpenSubKey.get_solo().uid, OpenSubKey.get_solo().key)
         if not token:
             # return sub
             print 'null token'
+            log.error('path: %s open sub null token' % relpath)
             return
         # check that the file is accessible
         if not path.exists(path.join(
@@ -308,6 +359,7 @@ def opensub(relpath):
             relpath,
         )):
             print "ERROR: " + relpath
+            log.error('path: %s does not exist' % relpath)
             return
         f = File(path.join(
             HDDRoot.get_solo().path,
@@ -315,6 +367,7 @@ def opensub(relpath):
             relpath,
         ))
         if f is None:
+            log.error('path: %s open sub file error' % relpath)
             return
         hash = f.get_hash()
         size = f.size
@@ -326,12 +379,13 @@ def opensub(relpath):
         if type(data) is list:
             if data[0].get('IDMovieImdb', None):
                 return data[0]['IDMovieImdb']
+        else:
+            log.warning('%s opensub failed to identify movie' % relpath)
     except ProtocolError as e:
         # most likely network error or API server error
         print "E: " + str(e)
-    except AssertionError as e:
+    except AssertionError:
         print 'Failed to authenticate opensubtitles login.'
-        print e
     except ProtocolError as e:
         """
         TODO: gaierror:
@@ -340,11 +394,11 @@ def opensub(relpath):
         if e.errcode == 503:
             # ProtocolError - 503 Service Unavailable
             print 'Check network connection and try again.'
-            print e.errmsg
-    except Exception as e:
-        # Other errors
-        print 'Network error.'
-        print e
+        log.error('path: %s open sub error occured' % relpath)
+        log.error(traceback.format_exc())
+    except Exception:
+        log.error('path: %s open sub error occured' % relpath)
+        log.error(traceback.format_exc())
 
 
 def movie_metadata_by_title(movie_title):
@@ -379,17 +433,14 @@ def movie_metadata_by_title(movie_title):
         None
     """
     assert type(movie_title) == str or type(movie_title) == unicode
-    # try:
-    #     movie = tmdb3_search_by_title(movie_title)
-    # except Exception:
-    #     pass
-
     try:
+        movie = tmdb3_search_by_title(movie_title)
         # if movie is None:
-        movie = omdb_search_by_title(movie_title)
+        #     movie = omdb_search_by_title(movie_title)
+        return movie
     except Exception:
         pass
-    return movie
+    return
 
 
 def movie_metadata_by_imdb_id(imdb_id):
@@ -423,24 +474,13 @@ def movie_metadata_by_imdb_id(imdb_id):
     Raises:
         None
     """
-    # assert type(imdb_id) == int
-    # try:
-    #     movie = tmdb3_search_by_imdb_id(imdb_id)
-    # except Exception:
-    #     pass
     try:
-        movie2 = omdb_search_by_imdb_id(imdb_id)
+        movie = omdb_search_by_imdb_id(imdb_id)
+        if movie is None:
+            movie = tmdb3_search_by_imdb_id(imdb_id)
+        return movie
     except Exception:
         pass
-    # if movie is not None:
-        # if movie2 is not None:
-        #     movie['imdb_rating'] = movie2.get('imdb_rating', 0)
-        #     movie['tomato_rating'] = movie2.get('tomato_rating', 0)
-        #     movie['metascore'] = movie2.get('metascore', 0)
-    # else:
-    #     if not movie2:
-    #         movie = movie2
-    return movie2
 
 
 def _omdb_url():
@@ -492,7 +532,7 @@ def omdb_search_by_title(movie_title):
     url = _omdb_url()
     # all spaces in movie title should be replaced with '+' in OMDb
     url = ''.join([url, 's=', movie_title.replace(' ', '+')])
-    # print url
+    log.debug('movie: %s omdb %s' % (movie_title, url))
     response = urllib2.urlopen(url, timeout=5)
     data = json.load(response)
     if data.get('Error', None):
@@ -500,6 +540,7 @@ def omdb_search_by_title(movie_title):
         #     "Response":"False",
         #     "Error":"Movie not found!"
         # }
+        log.warning('movie: %s omdb found no results' % movie_title)
         return None
     # There is at least one result
     if data.get('Search', None):
@@ -542,13 +583,13 @@ def omdb_search_by_imdb_id(imdb_id):
     Raises:
         ValueError: invalid IMDb ID
     """
-    # print 'OMDb search: ', imdb_id
+    print 'OMDb search: ', imdb_id
     if type(imdb_id) == str or type(imdb_id) == unicode:
         # check for valid format
         pattern1 = re.compile(r'^tt[0-9]{7}$')
         pattern2 = re.compile(r'^[0-9]+$')
         if pattern2.match(imdb_id):
-            imdb_id = 'tt' + imdb_id
+            imdb_id = 'tt' + '%07d' % int(imdb_id)
         elif not pattern1.match(imdb_id):
             raise ValueError('Invalid IMDb ID ' + imdb_id)
     elif type(imdb_id) == int:
@@ -557,7 +598,7 @@ def omdb_search_by_imdb_id(imdb_id):
     url = _omdb_url()
     # option tomatoes for retrieving RottenTomatoes ratings
     url = ''.join([url, 'i=', imdb_id, '&tomatoes=true'])
-    # print url
+    log.debug('imdb_id: %s omdb search %s' % (imdb_id, url))
     response = urllib2.urlopen(url, timeout=5)
     data = json.load(response)
     if data.get('Error', None):
@@ -565,7 +606,9 @@ def omdb_search_by_imdb_id(imdb_id):
         #     "Response":"False",
         #     "Error":"Movie not found!"
         # }
+        log.warning('imdb_id: %s omdb found no results' % imdb_id)
         return None
+    log.debug('%s omdb found results' % imdb_id)
     return omdb_parse_result(data)
 
 
@@ -599,7 +642,7 @@ def omdb_parse_result(data):
     Raises:
         None
     """
-    # print 'omdb_parse'
+    print 'omdb_parse: %s' % data['Title']
     assert type(data) == dict
     movie = {}
     # TODO: Levenstein similarity of movie title and filename
@@ -607,6 +650,7 @@ def omdb_parse_result(data):
     if data['Released'] != 'N/A':
         movie['release'] = datetime.strptime(data['Released'], '%d %b %Y')
     movie['imdb_id'] = int(data['imdbID'][2:])
+    log.info('omdb found %s %s' % (movie['title'], movie['imdb_id']))
     # list of actors
     if data['Actors'] != 'N/A':
         movie['cast'] = {
@@ -665,27 +709,38 @@ def tmdb3_search_by_title(movie_title):
         None
     """
     try:
-        # print 'TMDb: ', movie_title
-        # log('downloading movie metadata...', newline=False)
-        # res = searchMovie(movie_title)
-        res = None
-        assert res is not None
-        if len(res) == 0:
+        print 'TMDb: ', movie_title
+        search = tmdb.Search()
+        response = search.movie(query=movie_title)
+        if response['total_results'] == 0:
             # no match found
+            log.warning('movie: %s tmdb no results' % movie_title)
             print 'TMDb not found: ', movie_title
             return
-        # log('COMPLETE!')
-        if len(res) == 1:
-            # got our movie!!!
-            res = res[0]
-        else:
-            # TODO: offer user the choice of movies
-            res = res[0]
-        movie = tmdb_parse_result(res)
+
+        # TODO: offer user the choice of movies
+        # search.results -> select
+
+        # we have a title, now do an OMDb search by title
+        # because TMDb does not support getting imdb ID
+        response = tmdb.Movies(search.results[0]['id'])
+        imdb_id = tmdb.Movies(search.results[0]['id']).info()['imdb_id']
+        log.info('movie: %s %s found by tmdb' % (
+            search.results[0]['title'], imdb_id
+        ))
+        movie = omdb_search_by_imdb_id(imdb_id)
+        if movie is None:
+            # omdb could not get metadata
+            # save whatever information we have to database
+            movie = tmdb_parse_result(search.results[0])
+            response = tmdb.Movies(search.results[0]['id'])
+            movie.imdb_id = response.info()['imdb_id']
+            movie.imdb_rating = imdb_rating_by_id(movie.imdb_id)
         return movie
-    except Exception as e:
+    except Exception:
         print movie_title, "TMDb(T): Error retrieving movie metadata!"
-        print "TMDb(T): ", e
+        print "TMDb(%s): error occured" % movie_title
+        log.error(traceback.format_exc())
 
 
 def tmdb3_search_by_imdb_id(imdb_id):
@@ -719,7 +774,6 @@ def tmdb3_search_by_imdb_id(imdb_id):
         None
     """
     try:
-        # print 'TMDb(I):' + str(imdb_id)
         if type(imdb_id) == str or type(imdb_id) == unicode:
             # check for valid format
             pattern1 = re.compile(r'^tt[0-9]{7}$')
@@ -738,21 +792,25 @@ def tmdb3_search_by_imdb_id(imdb_id):
                 raise ValueError('Invalid IMDb ID ' + imdb_id)
         elif type(imdb_id) == int:
             imdb_id = 'tt' + '%07d' % imdb_id
-        # print 'TMDb: ', imdb_id
+        print 'TMDb: %s' % imdb_id
         # log('downloading movie metadata...', newline=False)
-        # res = tmdbMovie.fromIMDB(imdb_id)
-        res = None
+        url = 'https://api.themoviedb.org/3/find/%s' \
+            '?external_source=imdb_id&api_key=%s' % \
+            (imdb_id, TMDbKey.get_solo().key)
+        log.debug('%s tmdb by imdb id %s' % (imdb_id, url))
+        res = json.load(urllib2.urlopen(url, timeout=5))
         if res is not None:
-            movie = tmdb_parse_result(res)
+            movie = tmdb_parse_result(res['movie_results'][0])
+            movie['imdb_id'] = imdb_id
+            movie['imdb_rating'] = imdb_rating_by_id(imdb_id)
             return movie
     except KeyError as e:
         print imdb_id, ' TMDb: IMDb ID does not match any known movie.'
         print e
-        return
     # log('COMPLETE!')
-    except Exception as e:
-        print imdb_id, "TMDb(I): Error retrieving movie metadata!"
-        print "TMDb(I): ", e
+    except Exception:
+        print "TMDb(I): %s Error retrieving movie metadata!" % imdb_id
+        log.error("TMDb(%s): %s" % (imdb_id, traceback.format_exc()))
 
 
 def tmdb_parse_result(res):
@@ -786,74 +844,16 @@ def tmdb_parse_result(res):
     """
     # log('starting to parse metadata...')
     movie = {}
-    movie['title'] = res.title
-    movie['release'] = res.releasedate
-    # list of actors
-    movie['cast'] = tmdb_result_cast(res)
-    # dictionary of lists of crew
-    movie['crew'] = tmdb_result_crew(res)
-    movie['imdb_rating'] = imdb_rating_by_id(res.imdb)
-    movie['tomato_rating'] = tomato_rating_by_imdb_id(res.imdb)
+    movie['title'] = res['title']
+    movie['release'] = datetime.strptime(res['release_date'], '%Y-%m-%d')
+    log.info('movie: %s tmdb result' % movie['title'])
+    # # list of actors
+    # movie['cast'] = tmdb_result_cast(res)
+    # # dictionary of lists of crew
+    # movie['crew'] = tmdb_result_crew(res)
+    # movie['imdb_rating'] = imdb_rating_by_id(res.imdb)
+    # movie['tomato_rating'] = tomato_rating_by_imdb_id(res.imdb)
     return movie
-
-
-def tmdb_result_cast(res):
-    """Parse movie cast from TMDb result
-
-    Parses the movie cast metadata retrieved from TMDb and converts it
-    to a dictionary with some fields.
-
-    Args:
-        res(dict): JSON data downloaded from TMDb
-
-    Returns:
-        cast(dict): a dictionary containing the movie metadata
-            cast {
-                Actor(list): list of actors,
-            }
-
-    Raises:
-        None
-    """
-    # log('getting cast...', newline=False)
-    cast = {}
-    actors = []
-    for actor in res.cast:
-        actors.append(actor.name)
-    cast['Actor'] = actors
-    # log('COMPLETE. ' + str(len(cast)) + ' actors retrieved.')
-    return cast
-
-
-def tmdb_result_crew(res):
-    """Parse movie crew from TMDb result
-
-    Parses the movie crew metadata retrieved from TMDb and converts it
-    to a dictionary with some fields.
-
-    Args:
-        res(dict): JSON data downloaded from TMDb
-
-    Returns:
-        crew(dict): a dictionary containing the movie metadata
-            crew {
-                Director(list): list of directors,
-            }
-
-    Raises:
-        None
-    """
-    # log('getting crew... ', newline=False)
-    crew = {
-        'Director': [],
-    }
-
-    for c in res.crew:
-        if c.job in crew:
-            crew[c.job].append(c.name)
-            # log(c.name + '-' + c.job, level=LOGGING_LEVELS['TRACE'])
-    # log('COMPLETE.')
-    return crew
 
 
 def imdb_rating_by_id(imdb_id):

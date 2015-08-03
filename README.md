@@ -25,10 +25,12 @@ The project requires **python2.7** to be installed. It has not been tested on *p
 
 ##### Dependencies:
 ###### Available via pip
-- Django==1.8.2
+- **Django==1.8.2**
 - django-grappelli==2.6.5
-- django-solo==1.1.0
-- tmdb3==0.7.2
+- **django-solo==1.1.0**
+- requests==2.5.3
+- **tmdbsimple==1.3.0**
+- wheel==0.24.0
 
 ###### Manually download python-opensubtitles
 Download the library from [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles) and movie the **pythonopensubtitles** folder to the project directory,
@@ -42,7 +44,7 @@ using git:
 ### Installing
 1. Download the project
 2. Make sure you have downloaded the *python-opensubtitles* into the project directory.
-3. Start the setup using ```python setup.py```
+3. Start the setup using **```python setup.py```**
 4. It will **fail** if there is *no internet connectivity*.
 5. It will install dependencies via *pip*
 6. It will create the *database* and associated *tables/schema* using django's *manage.py migrate*
@@ -55,6 +57,7 @@ using git:
 13. The **Movie Folder** is the path to the folder containing all the movie files. The path should be a valid and existing path, which can be verified using *python's* ```os.path.exists(...)``` Spaces in the path are automatically resolved. 
 14. Enter the keys for using APIs of *OpenSubtitles* and *TMDb*. Links to registration are provided on the setup page.
 15. Finally, upon successful setup completion, the **help page** will open showing a **Quick Start** quide.
+16. To *quit* the server, press ```ctrl+c``` in the terminal.
 
 ### Starting the server and interface
 1. start the server using ```python migrate.py runserver``` . This is a *django* command that starts a local server at **localhost** and port **8000**, both of which can be changed by passing parameters to the command.
@@ -81,7 +84,12 @@ The database is stored as a local database file named **db.sqlite3** in the hdd_
 ## Bugs and Issues
 Currently, this build is in early stages and there are bound to be several bugs and issues. Please help its development by filing these in the bug/issue tracker, or email me.
 
+### Logs
+The project mains verbose logs in the ```./logs/``` folder. To help me understand performance bottlenecks and fix bugs, email this folder (*zipped*) to **hdd-indexer@harshp.com** with an *appropriate* subject line.
+
+### Github Issues
+Please open related issues and bugs here using *Github Issues* so that it is easy for me to keep track and resolve them via commits.
+
 ## Blog and Contact
 The project blog is at [hdd-indexer at harshp.com](http://brainbank.harshp.com/hdd-indexer/)
 
-You can contact me regarding ideas, issues, bugs, and collaborations at **hdd-indexer@harshp.com**
