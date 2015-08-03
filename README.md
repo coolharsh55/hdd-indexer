@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=ready&title=Ready)](https://waffle.io/coolharsh55/hdd-indexer)
 # HDD-indexer
 [![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer) [![Coverage Status](https://coveralls.io/repos/coolharsh55/hdd-indexer/badge.svg?branch=coveralls&service=github)](https://coveralls.io/github/coolharsh55/hdd-indexer?branch=coveralls)
 
