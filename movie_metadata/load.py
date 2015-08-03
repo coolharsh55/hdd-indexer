@@ -39,9 +39,6 @@
 
 from __future__ import unicode_literals
 from datetime import datetime
-from tmdb3 import searchMovie
-from tmdb3 import Movie as tmdbMovie
-from tmdb3 import set_key as tmdb_set_key
 from os import path
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
@@ -49,7 +46,7 @@ from xmlrpclib import ProtocolError
 from hdd_settings.models import HDDRoot
 from hdd_settings.models import MovieFolder
 from movie_metadata.models import Movie
-from hdd_settings.models import TMDbKey
+# from hdd_settings.models import TMDbKey
 from hdd_settings.models import OpenSubKey
 from movie_metadata.movie import save as movie_save
 import json
@@ -153,7 +150,6 @@ def _run():
     Raises:
         None
     """
-    tmdb_set_key(TMDbKey.get_solo().key)
     # TODO: wrap the entire func in try block
     t_size = 5  # size of thread, and movie queue
     # download job queue
@@ -383,14 +379,14 @@ def movie_metadata_by_title(movie_title):
         None
     """
     assert type(movie_title) == str or type(movie_title) == unicode
-    try:
-        movie = tmdb3_search_by_title(movie_title)
-    except Exception:
-        pass
+    # try:
+    #     movie = tmdb3_search_by_title(movie_title)
+    # except Exception:
+    #     pass
 
     try:
-        if movie is None:
-            movie = omdb_search_by_title(movie_title)
+        # if movie is None:
+        movie = omdb_search_by_title(movie_title)
     except Exception:
         pass
     return movie
@@ -428,23 +424,23 @@ def movie_metadata_by_imdb_id(imdb_id):
         None
     """
     # assert type(imdb_id) == int
-    try:
-        movie = tmdb3_search_by_imdb_id(imdb_id)
-    except Exception:
-        pass
+    # try:
+    #     movie = tmdb3_search_by_imdb_id(imdb_id)
+    # except Exception:
+    #     pass
     try:
         movie2 = omdb_search_by_imdb_id(imdb_id)
     except Exception:
         pass
-    if movie is not None:
-        if movie2 is not None:
-            movie['imdb_rating'] = movie2.get('imdb_rating', 0)
-            movie['tomato_rating'] = movie2.get('tomato_rating', 0)
-            movie['metascore'] = movie2.get('metascore', 0)
-    else:
-        if not movie2:
-            movie = movie2
-    return movie
+    # if movie is not None:
+        # if movie2 is not None:
+        #     movie['imdb_rating'] = movie2.get('imdb_rating', 0)
+        #     movie['tomato_rating'] = movie2.get('tomato_rating', 0)
+        #     movie['metascore'] = movie2.get('metascore', 0)
+    # else:
+    #     if not movie2:
+    #         movie = movie2
+    return movie2
 
 
 def _omdb_url():
@@ -671,7 +667,8 @@ def tmdb3_search_by_title(movie_title):
     try:
         # print 'TMDb: ', movie_title
         # log('downloading movie metadata...', newline=False)
-        res = searchMovie(movie_title)
+        # res = searchMovie(movie_title)
+        res = None
         assert res is not None
         if len(res) == 0:
             # no match found
@@ -743,7 +740,8 @@ def tmdb3_search_by_imdb_id(imdb_id):
             imdb_id = 'tt' + '%07d' % imdb_id
         # print 'TMDb: ', imdb_id
         # log('downloading movie metadata...', newline=False)
-        res = tmdbMovie.fromIMDB(imdb_id)
+        # res = tmdbMovie.fromIMDB(imdb_id)
+        res = None
         if res is not None:
             movie = tmdb_parse_result(res)
             return movie
