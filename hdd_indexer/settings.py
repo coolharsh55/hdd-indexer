@@ -154,3 +154,90 @@ STATICFILES_DIRS = (
 GRAPPELLI_ADMIN_TITLE = 'HDD-indexer'
 """Grappelli admin title
 """
+
+# ensure logs directory exists
+try:
+    os.makedirs('./logs/')
+except OSError:
+    if not os.path.isdir('./logs/'):
+        raise
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)s] %(message)s',
+            'datefmt': "%d/%b %H:%M:%S",
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'system': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/system.log',
+            'formatter': 'verbose'
+        },
+        'server': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/server.log',
+            'formatter': 'verbose'
+        },
+        'load': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/load.log',
+            'formatter': 'verbose'
+        },
+        'crawl': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/crawl.log',
+            'formatter': 'verbose'
+        },
+        'movie': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/movie.log',
+            'formatter': 'verbose'
+        },
+        'setup': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/setup.log',
+            'formatter': 'verbose'
+        },
+
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['system'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'server': {
+            'handlers': ['server'],
+            'level': 'DEBUG',
+        },
+        'load': {
+            'handlers': ['load'],
+            'level': 'DEBUG',
+        },
+        'crawl': {
+            'handlers': ['crawl'],
+            'level': 'DEBUG',
+        },
+        'movie': {
+            'handlers': ['movie'],
+            'level': 'DEBUG',
+        },
+        'setup': {
+            'handlers': ['server'],
+            'level': 'DEBUG',
+        },
+    }
+}
