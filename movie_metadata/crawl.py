@@ -14,13 +14,18 @@ from os import path
 from os import stat
 from os import walk
 import threading
+import logging
+log = logging.getLogger('crawl')
+log.info(72*'-')
+log.info('crawl module loaded')
+
 from hdd_settings.models import HDDRoot
 from hdd_settings.models import MovieFolder
 from movie_metadata.models import Movie
 
 # TODO: video filetypes as model
 # TODO: movie size threshold as solo object
-_VIDEO_FILETYPES = video_file_extensions = (
+_VIDEO_FILETYPES = (
     '.264', '.3g2', '.3gp', '.3gp2', '.3gpp', '.3gpp2', '.3mm', '.3p2', '.60d',
     '.787', '.89', '.aaf', '.aec', '.aep', '.aepx',
     '.aet', '.aetx', '.ajp', '.ale', '.am', '.amc', '.amv', '.amx', '.anim',
@@ -76,10 +81,13 @@ _VIDEO_FILETYPES = video_file_extensions = (
 """Video File Extensions
     File extensions for identifying movie files
 """
+log.info('videos extensions')
+log.info(_VIDEO_FILETYPES)
 
 _MOVIE_SIZE_THRESHOLD = 300000000  # 300MB
 """File size threshold to differentiate videos and movies
 """
+log.info('movie size threshold: %s' % _MOVIE_SIZE_THRESHOLD)
 
 _ERROR = {
     1: 'HDD Root not configured properly.',
@@ -109,6 +117,7 @@ def crawler_status(key=None, value=None):
     _CRAWLER = crawler_status.status
     if _CRAWLER.get(key) is not None:
         if value is not None:
+            log.info('crawler status: %s -> %s' % (key, value))
             _CRAWLER[key] = value
         else:
             return _CRAWLER[key]
@@ -127,13 +136,16 @@ def start_crawler():
     Raises:
         None
     """
+    log.info('start crawler')
     hdd_root = HDDRoot.get_solo().path
     if not path.exists(hdd_root):
         print _ERROR[1]
+        log.error('%s is not a valid hdd root path' % hdd_root)
         return _ERROR[1]
     movie_folder = MovieFolder.get_solo().relpath
     if not path.exists(path.join(hdd_root, movie_folder)):
         print _ERROR[1]
+        log.error('%s is not a valid movie folder path' % movie_folder)
         return _ERROR[2]
     crawler_status('STATUS', True)
     crawler_status('FILES_EVALUATED', 0)
@@ -142,6 +154,7 @@ def start_crawler():
     thread = threading.Thread(target=crawl_movies)
     thread.daemon = True
     thread.start()
+    log.info('crawl started on daemon thread')
 
 
 def stop_crawler():
@@ -156,6 +169,7 @@ def stop_crawler():
     Raises:
         None
     """
+    log.info('crawler stopped')
     crawler_status('STATUS', False)
 
 
@@ -178,6 +192,7 @@ def crawl_movies():
         HDDRoot.get_solo().path,
         MovieFolder.get_solo().relpath,
     )
+    log.info('crawl movie folder path : %s' % movie_folder_path)
     files_evaluated = 0
     movies_found = 0
     movies_added = 0
@@ -205,8 +220,10 @@ def crawl_movies():
                     MovieFolder.get_solo().relpath,
                 ),
             )
+            log.debug('movie found at %s' % relpath)
 
             if _movie_exists_with_relpath(relpath):
+                log.debug('%s exists in db' % relpath)
                 continue
 
             movie = Movie()
@@ -214,6 +231,7 @@ def crawl_movies():
             movie.relpath = relpath
             movie.save()
             movies_added += 1
+            log.info('%s added to database' % movie.title)
             crawler_status('MOVIES_ADDED', movies_added)
     crawler_status('STATUS', False)
 
@@ -241,6 +259,7 @@ def _movie_exists_with_relpath(relpath):
 
     if count > 1:
         print 'Found movie, and duplicates (relpath) exist.'
+        log.warning('%s duplicates exist in database' % relpath)
         return True
 
     if count == 1:

@@ -19,6 +19,11 @@ from movie_metadata.models import Person
 from movie_metadata.models import Actor
 from movie_metadata.models import Director
 
+import logging
+log = logging.getLogger('movie')
+log.info(72 * '-')
+log.info('movie module loaded')
+
 
 def save(movie):
     """Save movie object to database
@@ -37,7 +42,8 @@ def save(movie):
     """
 
     if not movie:
-        # print 'Bad request. SKIP.'
+        # Bad request. SKIP.
+        log.error('bad request. SKIP.')
         return
 
     # print 'Saving Movie object... ',
@@ -48,30 +54,42 @@ def save(movie):
             title=movie['title']).exists():
         movie_in_db = Movie.objects.get(
             title=movie['title'])
-        # print 'already in database.'
+        # already in database
+        log.info('movie %s already in database' % movie['title'])
     else:
         # add movie to database
         movie_in_db = Movie()
         # title
         movie_in_db.title = movie['title']
         movie_in_db.save()
+        log.info('movie %s added to database' % movie['title'])
 
     if movie.get('imdb_id', None):
+        log.debug('%s: imdb_id %s' % (movie['title'], movie['imdb_id']))
         movie_in_db.imdb_id = movie['imdb_id']
     # release
     if movie.get('release', None):
+        log.debug('%s: release %s' % (movie['title'], movie['release']))
         movie_in_db.release = movie['release']
     # relative path
     assert movie.get('relpath', None) is not None
+    log.debug('%s: relpath %s' % (movie['title'], movie['relpath']))
     movie_in_db.relpath = movie['relpath']
     # imdb rating
     if movie.get('imdb_rating', None):
+        log.debug('%s: imdb_rating %s' % (
+            movie['title'], movie['imdb_rating']
+        ))
         movie_in_db.imdb_score = movie['imdb_rating']
     # rotten tomatoes rating
     if movie.get('tomato_rating', None):
+        log.debug('%s: tomato_rating %s' % (
+            movie['title'], movie['tomato_rating']
+        ))
         movie_in_db.tomatoes_rating = movie['tomato_rating']
     # metascore rating
     if movie.get('metascore', None):
+        log.debug('%s: metascore %s' % (movie['title'], movie['metascore']))
         movie_in_db.metascore = movie['metascore']
     # save movie in database
     movie_in_db.save()
@@ -123,10 +141,9 @@ def _save_person(movie_title, movie_role, person_list, role):
             # if not, save person to database
             p = Person(name=person)
             p.save()
-            # print ' added to database.',
+            log.info('person %s added to db' % person)
         else:
-            # print ' exists in database.',
-            pass
+            log.debug('person $s exists' % person)
 
         person = Person.objects.get(name=person)
         # check if person exists in given role
@@ -134,11 +151,19 @@ def _save_person(movie_title, movie_role, person_list, role):
             # if not, add person in role to database
             p = role(person=person)
             p.save()
-            # print 'Added in role.',
+            log.debug('%s added as %s' % (person, role.__name__))
+        else:
+            log.debug('%s exists as %s' % (person, role.__name__))
 
         person = role.objects.get(person=person)
         # check if person is associated with movie in given role
         if not person.movie_set.filter(title=movie_title).exists():
             # if not, add person to movie in role
             movie_role.add(person)
-            # print 'Added to movie.',
+            log.debug('%s added to %s as %s' % (
+                person, movie_title, role.__name__
+            ))
+        else:
+            log.debug('%s exists in %s as %s' % (
+                person, movie_title, role.__name__
+            ))

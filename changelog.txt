@@ -7,7 +7,36 @@ __future__
 New
 ~~~
 
+- Logging (level=debug) in all used modules and views. [Harshvardhan
+  Pandit]
+
+  system: logs/system.log
+  server requests: logs/server.log
+  load: logs/load.log
+  crawl: logs/crawl.log
+  movie save: logs/movie.log
+
+- Logging config for system, server, load, crawl, movie, and setup.
+  [Harshvardhan Pandit]
+
+  All logs are stored in /logs
+
+- Coveralls integration. [Harshvardhan Pandit]
+
+- Travis-ci build configuration. [Harshvardhan Pandit]
+
 - Initial commit v0.1. [Harshvardhan Pandit]
+
+Changes
+~~~~~~~
+
+- Remove tmdb3==0.7.2 library. [Harshvardhan Pandit]
+
+  tmdb3 library (pytmdb3) had buffer read errors that resulted in errors
+  during movie search by title
+
+- Install tmdb3 via pip, opensubtitles via git clone. [Harshvardhan
+  Pandit]
 
 Other
 ~~~~~
