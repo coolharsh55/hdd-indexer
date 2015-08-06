@@ -1,6 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=ready&title=Ready)](https://waffle.io/coolharsh55/hdd-indexer)
 # HDD-indexer
 [![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer) [![Coverage Status](https://coveralls.io/repos/coolharsh55/hdd-indexer/badge.svg?branch=coveralls&service=github)](https://coveralls.io/github/coolharsh55/hdd-indexer?branch=coveralls)
+
+[![Stories in Ready](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=ready&title=Ready)](https://waffle.io/coolharsh55/hdd-indexer)
+[![Stories in Progress](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=in+progress&title=In+Progress)](https://waffle.io/coolharsh55/hdd-indexer)
 
 **hdd-indexer** is an utility that indexes the contents of a hard disk, and allows viewing and interacting with it based on **metadata**. Currently, it supports only *video* files, specifically *movies*.
 
@@ -31,20 +33,23 @@ The project requires **python2.7** to be installed. It has not been tested on *p
 - **django-solo==1.1.0**
 - requests==2.5.3
 - **tmdbsimple==1.3.0**
+- **python-opensubtitles** (via [python-opensubtitles | coolharsh55](https://github.com/coolharsh55/python-opensubtitles)) a *fork* of [**python-opensubtitles**](https://github.com/agonzalezro/python-opensubtitles) that addresses the issue of svn repo error in pip freeze)
 - wheel==0.24.0
 
-###### Manually download python-opensubtitles
-Download the library from [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles) and movie the **pythonopensubtitles** folder to the project directory,
+##### python-opensubtitles is now installed via pip - *see above section*
 
-*OR*
+###### ~~Manually download python-opensubtitles~~
+~~Download the library from [python-opensubtitles](https://github.com/agonzalezro/python-opensubtitles) and movie the **pythonopensubtitles** folder to the project directory,~~
 
-using git: 
+~~*OR*~~
 
-```git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && mv python-opensubtitles/pythonopensubtitles ./ && rm -rf python-opensubtitles```
+~~using git:~~
+
+~~```git clone --depth=1 git://github.com/agonzalezro/python-opensubtitles && mv python-opensubtitles/pythonopensubtitles ./ && rm -rf python-opensubtitles```~~
 
 ### Installing
 1. Download the project
-2. Make sure you have downloaded the *python-opensubtitles* into the project directory.
+2. ~~Make sure you have downloaded the *python-opensubtitles* into the project directory.~~
 3. Start the setup using **```python setup.py```**
 4. It will **fail** if there is *no internet connectivity*.
 5. It will install dependencies via *pip*
@@ -93,4 +98,5 @@ Please open related issues and bugs here using *Github Issues* so that it is eas
 
 ## Blog and Contact
 The project blog is at [hdd-indexer at harshp.com](http://brainbank.harshp.com/hdd-indexer/)
+
 
