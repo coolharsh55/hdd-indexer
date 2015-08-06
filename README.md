@@ -66,7 +66,7 @@ The project requires **python2.7** to be installed. It has not been tested on *p
 16. To *quit* the server, press ```ctrl+c``` in the terminal.
 
 ### Starting the server and interface
-1. start the server using ```python migrate.py runserver``` . This is a *django* command that starts a local server at **localhost** and port **8000**, both of which can be changed by passing parameters to the command.
+1. start the server using **```python hdd-indexer.py```** . This uses a *django* command that starts a local server at **localhost** and port **8000**, both of which can be changed by passing parameters to the command.
 2. Open a browser at **localhost:8000**
 
 ### Modules
