@@ -1,9 +1,12 @@
 # HDD-indexer
 [![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer) [![Coverage Status](https://coveralls.io/repos/coolharsh55/hdd-indexer/badge.svg?branch=coveralls&service=github)](https://coveralls.io/github/coolharsh55/hdd-indexer?branch=coveralls)
 
+##### How the project is progressing:
 [![Stories in Ready](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=ready&title=Ready)](https://waffle.io/coolharsh55/hdd-indexer)
 [![Stories in Progress](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=in+progress&title=In+Progress)](https://waffle.io/coolharsh55/hdd-indexer)
+[![Throughput Graph](http://graphs.waffle.io/coolharsh55/hdd-indexer/throughput.svg)](https://waffle.io/coolharsh55/hdd-indexer/metrics)
 
+## What is HDD-indexer?
 **hdd-indexer** is an utility that indexes the contents of a hard disk, and allows viewing and interacting with it based on **metadata**. Currently, it supports only *video* files, specifically *movies*.
 
 ## Features:
@@ -12,6 +15,7 @@
  - Identify movies on disk and save them in a database
  - Download metadata such as release date, cast, crew, and ratings from online sources
  - Filter and sort movies using metadata
+ - Auto-detect torrent formatted filenames
 
 ### Planned:
 - Organise movies on disk automatically by their metadata such as release year, director, genre, etc.
@@ -98,5 +102,3 @@ Please open related issues and bugs here using *Github Issues* so that it is eas
 
 ## Blog and Contact
 The project blog is at [hdd-indexer at harshp.com](http://brainbank.harshp.com/hdd-indexer/)
-
-
