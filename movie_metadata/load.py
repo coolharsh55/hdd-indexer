@@ -338,15 +338,20 @@ def opensub(relpath):
         None
     """
     if 'sub' not in opensub.__dict__:
-        with Lock():
             sub = opensub_initiate()
             if sub:
                 opensub.sub = sub
+                token = sub.login(
+                    OpenSubKey.get_solo().uid,
+                    OpenSubKey.get_solo().key
+                )
+                opensub.token = token
+            opensub.lock = Lock()
 
-    sub = opensub.sub
     try:
         # login to opensub using API
-        token = sub.login(OpenSubKey.get_solo().uid, OpenSubKey.get_solo().key)
+        sub = opensub.sub
+        token = opensub.token
         if not token:
             # return sub
             print 'null token'
@@ -371,11 +376,12 @@ def opensub(relpath):
             return
         hash = f.get_hash()
         size = f.size
-        data = sub.search_subtitles([{
-            'sublanguageid': 'all',
-            'moviehash': hash,
-            'moviebytesize': size,
-        }])
+        with opensub.lock:
+            data = sub.search_subtitles([{
+                'sublanguageid': 'all',
+                'moviehash': hash,
+                'moviebytesize': size,
+            }])
         if type(data) is list:
             if data[0].get('IDMovieImdb', None):
                 return data[0]['IDMovieImdb']
