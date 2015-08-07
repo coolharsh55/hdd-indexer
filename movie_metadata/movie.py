@@ -143,7 +143,7 @@ def _save_person(movie_title, movie_role, person_list, role):
             p.save()
             log.info('person %s added to db' % person)
         else:
-            log.debug('person $s exists' % person)
+            log.debug('person %s exists' % person)
 
         person = Person.objects.get(name=person)
         # check if person exists in given role
