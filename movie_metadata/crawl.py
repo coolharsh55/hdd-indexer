@@ -13,10 +13,11 @@
 from os import path
 from os import stat
 from os import walk
+import re
 import threading
 import logging
 log = logging.getLogger('crawl')
-log.info(72*'-')
+log.info(72 * '-')
 log.info('crawl module loaded')
 
 from hdd_settings.models import HDDRoot
@@ -144,7 +145,7 @@ def start_crawler():
         return _ERROR[1]
     movie_folder = MovieFolder.get_solo().relpath
     if not path.exists(path.join(hdd_root, movie_folder)):
-        print _ERROR[1]
+        print _ERROR[2]
         log.error('%s is not a valid movie folder path' % movie_folder)
         return _ERROR[2]
     crawler_status('STATUS', True)
@@ -227,7 +228,7 @@ def crawl_movies():
                 continue
 
             movie = Movie()
-            movie.title = name
+            movie.title = filename_clean(name)
             movie.relpath = relpath
             movie.save()
             movies_added += 1
@@ -266,3 +267,43 @@ def _movie_exists_with_relpath(relpath):
         return True
 
     return False
+
+
+def filename_clean(filename, debug=False):
+    """Clean and format given filename
+
+    Removes whitespaces, extra characters and parses available filename
+    out from mixed files such as torrent downloads
+
+    Args:
+        filename(str): filename
+
+    Returns:
+        name(str): cleaned filename
+
+    Raises:
+        None
+    """
+    # TODO: refactor regex expressions and cleaning functios
+    patterns = (
+        # TODO: specify examples of each pattern
+        # TODO: ordered set of patterns, dictionary keys are random
+        (
+            r"([\w\s\.\-']+)[\d\(\)\[\]]{4,6}.*[\dp]{4,5}.*",
+            lambda s: s[0]
+        ),
+        (r"([\w\s\-\.']+)[\d\(\)\[\]]{4,6}", lambda s: s[0]),
+        # This-is.a Movie (year) or [year].more-text here
+        (r"([\w\s\.\-']+)[\d\(\)\[\]]{4,6}.*", lambda s: s[0]),
+    )
+    for pattern, extract in patterns:
+        regexres = re.match(pattern, filename)
+        if regexres:
+            if debug:
+                print pattern
+            name = extract(regexres.groups())
+            name = ' '.join(name.split('.')).strip()
+            log.info('%s cleaned to %s using %s' % (filename, name, pattern))
+            return name
+    name = ' '.join(filename.split('.')).strip()
+    return filename
