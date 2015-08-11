@@ -20,5 +20,6 @@ urlpatterns = patterns(
     url(r'^settings/$', 'hdd_indexer.views.settings', name='settings'),
     url(r'^crawler/$', 'hdd_indexer.views.crawler', name='crawler'),
     url(r'^loader/$', 'hdd_indexer.views.loader', name='loader'),
+    url(r'^export/$', 'hdd_indexer.views.export', name='export'),
     # TODO: replace urls in index.html and input_alert.js with {{url}}
 )

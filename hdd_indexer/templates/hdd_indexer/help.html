@@ -237,9 +237,12 @@
                         <h4 class="modal-title">Exporter</h4>
                     </div>
                     <div class="modal-body">
-                    <div class='alert alert-danger alert-dismissable tc' role='a'>not implemented yet</div>
-                        The <strong>Exporter</strong> module can be used to export a list of movies in database and on disk.<br />
-                        The exported list can be saved in many formats, such as <i>csv, txt, json, xml, pdf, binary, etc.</i>
+                        <p>The <strong>Exporter</strong> module can be used to export a list of movies in database and on disk.<br />
+                        The exported list can be saved in many formats, such as <i>csv, txt, json, xml, pdf, binary, etc.</i></p>
+                        <p><strong>Attributes:</strong> These are the movie metadata you want to export. It can be the movie title, release date, ratings, IMDb ID, etc.</p>
+                        <p><strong>File Format:</strong> Different file formats store and show data differently. Plain text files (txt) show data as plain text strings with tabs as seperataors whereas CSV files use comma(,) as delimiter.</p>
+                        <p><strong>Filters:</strong> Select only some movies based on filters. You can select movies that have released in a particular year, or those that have any of the select actors or are directed by a particular actor. You can also select movies that are within the ratings criteria specified.</p>
+                        <p><strong>Ordering:</strong> This orders the movies exported by the selected criteria. Ordering by titles orders the movies alphabetically by their title. Ordering by ratings orders movies by the selected ratings in descending order.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

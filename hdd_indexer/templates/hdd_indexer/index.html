@@ -54,7 +54,9 @@
             overflow:auto;
             border: solid lightgray 1px;
         }
+
     </style>
+    <link href="{% static 'css/awesome-bootstrap-checkbox.css' %}" rel='stylesheet'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -134,12 +136,55 @@
     <div class='panel text-center'>
         <div id='settings' class='panel-heading' role='tab'>
             <h2 class="panel-title">
-            <a class="collapsed hvr-grow-shadow" style="text-shadow: #33FF33 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-exporter" aria-expanded="false" aria-controls="collapse-blog"><i class='fa fa-exclamation-triangle not-ready'></i> Exporter</a><p><small>export movies and/or metadata</small></p>
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #33FF33 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-exporter" aria-expanded="false" aria-controls="collapse-blog">Exporter</a><p><small>export movies and/or metadata</small></p>
             </h2>
         </div>
         <div id="collapse-exporter" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
             <div class="panel-body">
-                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+            <form action="export" method="GET" class="form">
+                <div class='alert alert-info'>Select Movie attributes to download</div>
+                <div class="form-group">
+                <label>Contents</label><br>
+                <div class='row'>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-title' id='content-title'><label for='content-title'>Title</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-imdb_id' id='content-imdb_id'><label for='content-imdb_id'>IMDb ID</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-release' id='content-release'><label for='content-release'>Release Date</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-imdb_score' id='content-imdb_score'><label for='content-imdb_score'>IMDb Ratings</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-release' id='content-release'><label for='content-release'>Rotten Tomatoes Ratings</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='content-release' id='content-release'><label for='content-release'>Metascore</label></div></div>
+                </div>
+                </div>
+
+                <!-- <div class="form-group">
+                <label>Filter</label><br>
+                <div class='row'>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='checkbox checkbox-success'><input type='checkbox' name='filter-' id='filter-'><label for='filter-'></label></div></div>
+                </div>
+                </div> -->
+
+                <div class="form-group">
+                <label>Ordering</label><br>
+                <div class='row'>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order-title' id='order-title'><label for='order-title'>Title</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order-release' id='order-release'><label for='order-release'>Release Date</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order-imdb_id' id='order-imdb_id'><label for='order-imdb_id'>IMDb ID</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order--imdb_score' id='order--imdb_score'><label for='order--imdb_score'>IMDb Ratings</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order--tomatoes_rating' id='order--tomatoes_rating'><label for='order--tomatoes_rating'>Rotten Tomatoes Ratings</label></div></div>
+                <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2"><div class='radio radio-success'><input type='radio' name='order' value='order--metascore' id='order--metascore'><label for='order--metascore'>Metascore</label></div></div>
+                </div>
+                </div>
+
+                <div class='form-group'>
+                <label>File Format</label><br>
+                <div class='row'>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='file-format' value='file-format-txt' id='file-format-txt'><label for='file-format-txt'>Text File</label></div></div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='file-format' value='file-format-csv' id='file-format-csv'><label for='file-format-csv'>Comma Separated Values (CSV)</label></div></div>
+                </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+
             </div>
         </div>
     </div>

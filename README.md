@@ -16,12 +16,12 @@
  - Download metadata such as release date, cast, crew, and ratings from online sources
  - Filter and sort movies using metadata
  - Auto-detect torrent formatted filenames
+ - Export list of movies. Sort and filter based on metadata.
 
 ### Planned:
 - Organise movies on disk automatically by their metadata such as release year, director, genre, etc.
 - Compare contents of two disks to create a share/lend/borrow list
 - Remote storage of disk index so that it can be viewed by others
-- Export list of movies. Sort and filter based on metadata.
 
 ## Use:
 

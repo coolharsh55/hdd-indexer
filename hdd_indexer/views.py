@@ -21,7 +21,7 @@ from os import path
 import re
 import logging
 log = logging.getLogger('server')
-log.info(72*'-')
+log.info(72 * '-')
 log.info('server views loaded')
 
 from django.http import HttpResponse
@@ -43,6 +43,9 @@ from movie_metadata.crawl import stop_crawler
 from movie_metadata.load import loader_status
 from movie_metadata.load import start_loader
 from movie_metadata.load import stop_loader
+
+from movie_metadata.models import Movie
+from movie_metadata.export import export as get_export_content
 
 
 @csrf_exempt
@@ -506,3 +509,36 @@ def setup(request):
             'err_msg': err_msg,
         }
     )
+
+
+def export(request):
+    """export movies to file and serve it as a downloaded file
+    """
+    if request.method == 'GET':
+        fields = []
+        filter = []
+        order = []
+        file_format = 'txt'
+        for key in request.GET.keys():
+            if key.startswith('content-'):
+                fields.append(key[8:])
+            elif key.startswith('filter-'):
+                filter.append(key[7:])
+            elif key.startswith('order'):
+                order.append(request.GET[key][6:])
+            elif key.startswith('file-format'):
+                file_format = request.GET[key][12:]
+        log.info('export request movie.%s with fields=%s, '
+                 'filter=%s, ordering=%s' %
+                 (file_format, fields, filter, order))
+        content = get_export_content(
+            Movie, fields=fields, order=order, file_format=file_format)
+        if content is None:
+            log.error('export error Http400')
+            return HttpResponse(status=400)
+        filename = 'movies.' + file_format
+        response = HttpResponse(content, content_type='application/zip')
+        response['Content-Disposition'] = 'inline; filename=%s' % filename
+        log.info('export request completed: served %s' % filename)
+        return response
+    return HttpResponse(status=405)

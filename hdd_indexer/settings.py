@@ -211,6 +211,12 @@ LOGGING = {
             'filename': 'logs/setup.log',
             'formatter': 'verbose'
         },
+        'export': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/export.log',
+            'formatter': 'verbose',
+        }
 
     },
     'loggers': {
@@ -239,5 +245,9 @@ LOGGING = {
             'handlers': ['server'],
             'level': 'DEBUG',
         },
+        'export': {
+            'handlers': ['export'],
+            'level': 'DEBUG',
+        }
     }
 }
