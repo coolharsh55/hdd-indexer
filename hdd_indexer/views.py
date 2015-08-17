@@ -14,6 +14,8 @@
 # if True, assigns the path to HDDRoot.path
 # then we need to call HDDRoot.save() to save the path
 # TODO: check if crawler/loader active and send status to homepage
+# TODO: documentation for export
+# TODO: documentation for organize
 
 
 import json
@@ -46,6 +48,10 @@ from movie_metadata.load import stop_loader
 
 from movie_metadata.models import Movie
 from movie_metadata.export import export as get_export_content
+
+from movie_metadata.organize import organizer_status
+from movie_metadata.organize import start_organizer
+from movie_metadata.organize import stop_organizer
 
 
 @csrf_exempt
@@ -541,4 +547,65 @@ def export(request):
         response['Content-Disposition'] = 'inline; filename=%s' % filename
         log.info('export request completed: served %s' % filename)
         return response
+    return HttpResponse(status=405)
+
+
+@csrf_exempt
+def organizer(request):
+    """
+    """
+    def response(e_m=None):
+        """Response for GET/POST methods on loader
+
+        returns a HTTPResponse with content type json
+
+        Args:
+            e_m(str): error message if any
+            e_m(None): if no error message
+        """
+        if e_m:
+            e = True
+        else:
+            e = False
+        # print loader_status('SKIPPED_LIST')
+        payload = {
+            'status': organizer_status(),
+            'files_evaluated': organizer_status('FILES_EVALUATED'),
+            'error': e,
+            'error_message': e_m,
+        }
+        log.debug('organizer status: %s' % payload)
+        # print payload
+        return HttpResponse(
+            json.dumps(payload),
+            content_type='application/json'
+        )
+
+    # if request is not POST, return error
+    if request.method == 'GET':
+        # print 'GET', request.GET
+        if request.GET.get('status', None):
+            log.debug('GET: organizer status')
+            return response()
+    elif request.method == 'POST':
+        # print 'POST', request.POST
+        if request.POST.get('start', None):
+            log.info('POST: start organizer')
+            # print 'starting loader'
+            err_msg = start_organizer()
+            if err_msg:
+                log.error('start organizer: %s' % err_msg)
+                return response(err_msg)
+            # print 'started loader'
+            return response()
+        elif request.POST.get('stop', None):
+            log.info('POST: stop organizer')
+            err_msg = stop_organizer()
+            if err_msg:
+                log.error('stop organizer: %s' % err_msg)
+                return response(err_msg)
+            return response()
+
+    # 405: Method not allowed
+    log.error('405: Method not allowed')
     return HttpResponse(status=405)

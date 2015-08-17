@@ -17,9 +17,10 @@
  - Filter and sort movies using metadata
  - Auto-detect torrent formatted filenames
  - Export list of movies. Sort and filter based on metadata.
+ - Organize movie files by release date or IMDb scores.
 
 ### Planned:
-- Organise movies on disk automatically by their metadata such as release year, director, genre, etc.
+- More organization criterias such as director, genre, etc.
 - Compare contents of two disks to create a share/lend/borrow list
 - Remote storage of disk index so that it can be viewed by others
 
@@ -83,6 +84,12 @@ Crawls the hard disk looking for movies and adds them to database. The crawler i
 #### Load
 Downloads and updates metadata for movies in database. The loader requires internet connectivity and will not function without it. It can take a substantial amount of time based on number of movies in database. Since this is not a complete release, some times the loader module can get stuck. You can stop the module safely in such cases.
 
+#### Export
+Exports a list of movies in database to a text file that is served as a download in the browser. The exported list can be ordered by various criterions such as release date, title, IMDb score, etc.
+
+#### Organize
+Renames files by their movie titles, and re-organizes them in folder based on selected criterion. All uncategorized files are moved to _'uncategorized'_ folder, and all non-movie files are movied to _'other files'_ folder.
+
 ## More Info
 
 ### Framework - Django/py2.7
@@ -95,7 +102,7 @@ The database is stored as a local database file named **db.sqlite3** in the hdd_
 Currently, this build is in early stages and there are bound to be several bugs and issues. Please help its development by filing these in the bug/issue tracker, or email me.
 
 ### Logs
-The project mains verbose logs in the ```./logs/``` folder. To help me understand performance bottlenecks and fix bugs, email this folder (*zipped*) to **hdd-indexer@harshp.com** with an *appropriate* subject line.
+The project maintains verbose logs in the ```./logs/``` folder. To help me understand performance bottlenecks and fix bugs, email this folder (*zipped*) to **hdd-indexer@harshp.com** with an *appropriate* subject line.
 
 ### Github Issues
 Please open related issues and bugs here using *Github Issues* so that it is easy for me to keep track and resolve them via commits.

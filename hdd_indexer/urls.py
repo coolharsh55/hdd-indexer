@@ -21,5 +21,6 @@ urlpatterns = patterns(
     url(r'^crawler/$', 'hdd_indexer.views.crawler', name='crawler'),
     url(r'^loader/$', 'hdd_indexer.views.loader', name='loader'),
     url(r'^export/$', 'hdd_indexer.views.export', name='export'),
+    url(r'^organizer/$', 'hdd_indexer.views.organizer', name='organizer'),
     # TODO: replace urls in index.html and input_alert.js with {{url}}
 )

@@ -26,7 +26,7 @@ $(document).ready(function() {
         if (data['status'] === true) {
             $('#loader-status').text('RUNNING');
             $('#loader-status').removeClass('label-danger').addClass('label-success');
-            $('#loader-switch').text('Stop Loader');
+            $('#loader-switch').text('Stop Organizer');
             $('#loader-switch').removeClass('btn-success').addClass('btn-danger');
             $('#loader-status-info').addClass('fa-spin');
             $('#loader-status-info').show();
@@ -42,6 +42,26 @@ $(document).ready(function() {
             $('#loader-status-info').removeClass('fa-spin');
             $('#loader-status-info').hide();
             $('#loader-load-status').hide();
+        }
+    });
+    $.get( "/organizer/", {'status': true,}, function(data) {
+        if (data['status'] === true) {
+            $('#organizer-status').text('RUNNING');
+            $('#organizer-status').removeClass('label-danger').addClass('label-success');
+            $('#organizer-switch').text('Stop Organizer');
+            $('#organizer-switch').removeClass('btn-success').addClass('btn-danger');
+            $('#organizer-status-info').addClass('fa-spin');
+            $('#organizer-status-info').show();
+            $('#organizer-loade-status').show();
+            $('#organizer-files-evaluated').text(data['files_evaluated']);
+        } else {
+            $('#organizer-status').text('STOPPED');
+            $('#organizer-status').removeClass('label-success').addClass('label-danger');
+            $('#organizer-switch').text('Start Organizer');
+            $('#organizer-switch').removeClass('btn-danger').addClass('btn-success');
+            $('#organizer-status-info').removeClass('fa-spin');
+            $('#organizer-status-info').hide();
+            $('#organizer-loade-status').hide();
         }
     });
 });
@@ -301,7 +321,7 @@ document.getElementById('loader-switch').onclick = function(){
                                 swal("Server Error", data['error_message'], "error");
                                 return;
                             }
-                            swal("Loader status", "The Loader has been stopped.", "success");
+                            swal("Organizer status", "The Loader has been stopped.", "success");
                             $('#loader-status').text('STOPPED');
                             $('#loader-status').removeClass('label-success').addClass('label-danger');
                             $('#loader-switch').text('Start loader');
@@ -366,7 +386,7 @@ document.getElementById('loader-switch').onclick = function(){
                                     }
                                     displaylist+="</div>";
                                     swal({
-                                        title: "Load complete!",
+                                        title: "Loader complete!",
                                         text: "<strong>Movies evaluated:</strong> " + data['movies_evaluated'] + "<br /><strong>Metadata downloaded:</strong> " + data['metadata_downloaded'] + "<br /><strong>Movies skipped: </strong>" + data['movies_skipped'] + "<br />" + displaylist + "<br /><br />",
                                         type: "success",
                                         html: true,
@@ -375,6 +395,104 @@ document.getElementById('loader-switch').onclick = function(){
                                     $('#loader-movies-evaluated').text(data['movies_evaluated']);
                                     $('#loader-metadata-downloaded').text(data['metadata_downloaded']);
                                     $('#loader-movies-skipped').text(data['movies_skipped']);
+                                }
+                            });
+                            }, delay);
+                        });
+                    }
+                }
+            );
+        }
+    });
+};
+
+// ORGANIZER
+document.getElementById('organizer-switch').onclick = function(){
+    $.get( "/organizer/", {'status': true,}, function(data) {
+        if (data['status'] === true) {
+            swal({
+                    title: "Stop Organizer?",
+                    text: "Do you really want to stop the Organizer?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, stop it!",
+                    cancelButtonText: "No, turn back!",
+                    closeOnConfirm: false,
+                    closeOnCancel: true,
+                },
+                function(isConfirm){
+                   if (isConfirm) {
+                        $.post( "/organizer/", {
+                            'stop': true,
+                        }, function(data) {
+                            if (data['error'] == true) {
+                                swal("Server Error", data['error_message'], "error");
+                                return;
+                            }
+                            swal("Organizer status", "The Organizer has been stopped.", "success");
+                            $('#organizer-status').text('STOPPED');
+                            $('#organizer-status').removeClass('label-success').addClass('label-danger');
+                            $('#organizer-switch').text('Start organizer');
+                            $('#organizer-switch').removeClass('btn-danger').addClass('btn-success');
+                            $('#organizer-status-info').removeClass('fa-spin');
+                            $('#organizer-status-info').hide();
+                            $('#organizer-organize-status').hide();
+                        });
+                    }
+                }
+            );
+        } else {
+            swal({
+                    title: "Start Organizer?",
+                    text: "Once started, the Organizer will take a potentially significant amount of time downorganizing metadata from online sources.",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#FF0000",
+                    confirmButtonText: "Yes, start it!",
+                    cancelButtonText: "No, turn back!",
+                    closeOnConfirm: false,
+                    closeOnCancel: true,
+                },
+                function(isConfirm){
+                   if (isConfirm) {
+                        $.post( "/organizer/", {
+                            'start': true,
+                        }, function(data) {
+                            if (data['error'] == true) {
+                                swal("Server Error", data['error_message'], "error");
+                                return;
+                            }
+                            swal("organizer status", "The Organizer has been started.", "success");
+                            $('#organizer-status').text('RUNNING');
+                            $('#organizer-status').removeClass('label-danger').addClass('label-success');
+                            $('#organizer-switch').text('Stop Organizer');
+                            $('#organizer-switch').removeClass('btn-success').addClass('btn-danger');
+                            $('#organizer-status-info').addClass('fa-spin');
+                            $('#organizer-status-info').show();
+                            $('#organizer-organize-status').show();
+                            $('#organizer-files-evaluated').text(data['movies_evaluated']);
+                            var timer, delay = 1000;
+
+                            timer = setInterval(function(){
+                            $.get( "/organizer/", {'status': true,}, function(data) {
+                                if (data['status']==false) {
+                                    clearInterval( timer );
+                                    $('#organizer-status').text('STOPPED');
+                                    $('#organizer-status').removeClass('label-success').addClass('label-danger');
+                                    $('#organizer-switch').text('Start Organizer');
+                                    $('#organizer-switch').removeClass('btn-danger').addClass('btn-success');
+                                    $('#organizer-status-info').removeClass('fa-spin');
+                                    $('#organizer-status-info').hide();
+                                    $('#organizer-organize-status').hide();
+                                    swal({
+                                        title: "Organize complete!",
+                                        text: "Your files are now Organized...!",
+                                        type: "success",
+                                        html: true,
+                                    });
+                                } else {
+                                    $('#organizer-files-evaluated').text(data['files_evaluated']);
                                 }
                             });
                             }, delay);

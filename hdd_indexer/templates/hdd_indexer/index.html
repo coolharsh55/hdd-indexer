@@ -222,7 +222,19 @@
         </div>
         <div id="collapse-organizer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
             <div class="panel-body">
-                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+                <div class="list-group">
+                    <h4><span id='organizer-status'></span> <i id='organizer-status-info' class='fa fa-2x fa-spinner fa-pulse'></i></h4>
+                </div>
+                <div id='organizer-organize-status' class="list-group">
+                    <p>files evaluated<br /><span id='organizer-files-evaluated'></span></p>
+                </div>
+                <div id='ogranizer-options' class='row'>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='order' value='order-title' id='order-title' checked='true'><label for='order-title'>by movie release date</label></div></div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='order' value='order-release' id='order-release'><label for='order-release'>by movie imdb id</label></div></div>
+                </div>
+                <div class="list-group">
+                    <button id='organizer-switch' type="button" class="btn hvr-grow">Start Organizer</button>
+                </div>
             </div>
         </div>
     </div>
@@ -355,13 +367,13 @@
 
     <!-- jQuery -->
     <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery.jWizard.min.js' %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
     <script src="{% static 'js/sweetalert.min.js' %}"></script>
     <script src="{% static 'js/input_alert.js' %}"></script>
-    <script src="{% static 'js/jquery.jWizard.min.js' %}"></script>
 
 </body>
 

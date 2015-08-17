@@ -216,7 +216,13 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': 'logs/export.log',
             'formatter': 'verbose',
-        }
+        },
+        'organize': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/organize.log',
+            'formatter': 'verbose',
+        },
 
     },
     'loggers': {
@@ -248,6 +254,10 @@ LOGGING = {
         'export': {
             'handlers': ['export'],
             'level': 'DEBUG',
-        }
+        },
+        'organize': {
+            'handlers': ['organize'],
+            'level': 'DEBUG',
+        },
     }
 }
