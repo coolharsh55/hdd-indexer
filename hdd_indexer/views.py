@@ -53,6 +53,8 @@ from movie_metadata.organize import organizer_status
 from movie_metadata.organize import start_organizer
 from movie_metadata.organize import stop_organizer
 
+from movie_metadata.compare import compare
+
 
 @csrf_exempt
 def crawler(request):
@@ -607,5 +609,23 @@ def organizer(request):
             return response()
 
     # 405: Method not allowed
+    log.error('405: Method not allowed')
+    return HttpResponse(status=405)
+
+
+@csrf_exempt
+def comparator(request):
+    """compare movies across disks
+    """
+    if request.method == 'POST':
+        if request.FILES.get('c-file', None):
+            take_list, give_list = compare(request.FILES['c-file'])
+            return render(
+                request,
+                'hdd_indexer/compare.html',
+                {
+                    'take': take_list,
+                    'give': give_list,
+                })
     log.error('405: Method not allowed')
     return HttpResponse(status=405)

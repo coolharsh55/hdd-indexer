@@ -14,6 +14,7 @@
 
 import cStringIO as StringIO
 import logging
+import json
 import traceback
 log = logging.getLogger('export')
 log.info(72 * '-')
@@ -22,6 +23,7 @@ log.info('exporter loaded')
 _FILE_FORMATS = {
     'txt': '\t',
     'csv': ',',
+    'json': '',
 }
 
 log.info('supported file formats: %s' % _FILE_FORMATS.keys())
@@ -75,6 +77,22 @@ def export(
             print 'incorrect field: %s' % field
 
     # populate file with objects
+    if file_format == 'json':
+        movies = {}
+        for obj in objects:
+            if obj.imdb_id:
+                movies[obj._id] = {
+                    'imdb_id': obj.imdb_id,
+                    'title': obj.title,
+                    'release_date': str(obj.release), }
+            else:
+                pass
+
+        dump = json.dumps(
+            movies, sort_keys=True, indent=4, separators=(',', ': '))
+        export_file.write(dump)
+        return export_file.getvalue()
+
     separator = _FILE_FORMATS[file_format]
     for obj in objects:
         val = []

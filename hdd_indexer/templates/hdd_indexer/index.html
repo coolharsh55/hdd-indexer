@@ -54,6 +54,35 @@
             overflow:auto;
             border: solid lightgray 1px;
         }
+        input[type="file"] {
+            border: 5px solid white;
+            -webkit-box-shadow:
+              inset 0 0 8px  rgba(0,0,0,0.1),
+                    0 0 16px rgba(0,0,0,0.1);
+            -moz-box-shadow:
+              inset 0 0 8px  rgba(0,0,0,0.1),
+                    0 0 16px rgba(0,0,0,0.1);
+            box-shadow:
+              inset 0 0 8px  rgba(0,0,0,0.1),
+                    0 0 16px rgba(0,0,0,0.1);
+            padding: 15px;
+            background: rgba(255,255,255,0.5);
+            margin: 0 0 10px 0;
+        }
+        div.wrapper {
+            position:  absolute;
+            top : 200px;
+            left: 300px;
+            width: 300px;
+            height:300px;
+            border:1px solid black;
+        }
+
+        input[type="file"] {
+             position: relative;
+             display: block;
+             margin : 0 auto;
+        }
 
     </style>
     <link href="{% static 'css/awesome-bootstrap-checkbox.css' %}" rel='stylesheet'>
@@ -98,15 +127,36 @@
     <div class='panel text-center'>
         <div id='settings' class='panel-heading' role='tab'>
             <h2 class="panel-title">
-            <a class="collapsed hvr-grow-shadow" style="text-shadow: #FF6600 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-comparator" aria-expanded="false" aria-controls="collapse-comparator"><i class='fa fa-exclamation-triangle not-ready'></i> Comparator</a><p><small>compare disk contents with another remote or local disk</small></p>
+            <a class="collapsed hvr-grow-shadow" style="text-shadow: #FF6600 2px 2px 10px;" data-toggle="collapse" data-parent="#accordion" href="#collapse-comparator" aria-expanded="false" aria-controls="collapse-comparator">Comparator</a><p><small>compare disk contents with another local or remote disk</small></p>
             </h2>
         </div>
         <div id="collapse-comparator" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-settings">
-            <div class="panel-body">
-                <div class='alert alert-danger'><p>not impletemented yet</p></div>
+            <div class="panel-body"type="button" >
+                <a id='comparator-btn-file' data-toggle="modal" href="#modal-comparator" class="btn btn-info">Select data file</a>
+                <button type="button" class="btn btn-danger">Select remote disk</button>
             </div>
         </div>
     </div>
+     <!-- Modal -->
+    <div class="modal fade" id="modal-comparator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Modal title</h4>
+        </div>
+        <div class="modal-body">
+            <form id="form-comparator" name="form-comparator" method="POST" action="/comparator/" enctype='multipart/form-data' onsubmit="return Checkfiles(this);">
+                {% csrf_token %}
+                <div class='text-center'>
+                <input id="c-file" name='c-file' type="file" /><br>
+                <input type='submit' name='submit' value='Upload' id='file-upload' class="btn btn-success" />
+                </div>
+            </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     <!-- Crawler -->
     <div class='panel text-center'>
@@ -179,6 +229,7 @@
                 <div class='row'>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='file-format' value='file-format-txt' id='file-format-txt'><label for='file-format-txt'>Text File</label></div></div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='file-format' value='file-format-csv' id='file-format-csv'><label for='file-format-csv'>Comma Separated Values (CSV)</label></div></div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><div class='radio radio-success'><input type='radio' name='file-format' value='file-format-json' id='file-format-json'><label for='file-format-json'>JSON</label></div></div>
                 </div>
                 </div>
 

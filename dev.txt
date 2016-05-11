@@ -50,3 +50,37 @@ __remote server__
 - user registration for hdd
 
 ========================================================
+
+remote server:
+    register with email -> gives an API key
+    send via sendgrid
+    forgot API key -> register new API key
+    send via sendgrid
+    review all requests manually by me
+
+use without remote server support
+    do not enter API key in setup
+
+API key setup
+    change API key in settings
+    show text: registered as name@hdd-indexer
+
+comparator:
+    send IMDb ID + movie title to server
+    send remote disk instance name to server
+
+    response:
+        remote disk bad name
+
+        give/take list
+        match IMDb ID and get set difference
+
+    generate script:
+        generate give.py and take.py to be executed on disk root
+        OR
+        generate give.dat and take.dat to be selected on this instance
+        select other disk attached
+        give -> copies files to the other disk
+        take -> copies files to this disk
+        select movies in take list with checkboxes
+        

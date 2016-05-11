@@ -64,7 +64,24 @@ $(document).ready(function() {
             $('#organizer-loade-status').hide();
         }
     });
+
 });
+
+function Checkfiles(f){
+    f = f.elements;
+    if (f['c-file'].value === '') {
+        swal('File error!', 'Please select a json files', 'error');
+        f['c-file'].focus();
+        return false;
+    }
+    if(/.*\.(json)$/.test(f['c-file'].value)) {
+        return true;
+    } else {
+        swal('File error!', 'Please Upload json Files Only.', 'error');
+        f['c-file'].focus();
+        return false;
+    }
+};
 
 // SETTINGS - HDD NAME
 document.getElementById('hdd-name').onclick = function(){

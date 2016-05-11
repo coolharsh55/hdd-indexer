@@ -22,5 +22,6 @@ urlpatterns = patterns(
     url(r'^loader/$', 'hdd_indexer.views.loader', name='loader'),
     url(r'^export/$', 'hdd_indexer.views.export', name='export'),
     url(r'^organizer/$', 'hdd_indexer.views.organizer', name='organizer'),
+    url(r'^comparator/$', 'hdd_indexer.views.comparator', name='comparator')
     # TODO: replace urls in index.html and input_alert.js with {{url}}
 )
