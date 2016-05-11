@@ -1,10 +1,7 @@
 # HDD-indexer
-[![Build Status](https://travis-ci.org/coolharsh55/hdd-indexer.svg)](https://travis-ci.org/coolharsh55/hdd-indexer) [![Coverage Status](https://coveralls.io/repos/coolharsh55/hdd-indexer/badge.svg?branch=coveralls&service=github)](https://coveralls.io/github/coolharsh55/hdd-indexer?branch=coveralls)
 
-##### How the project is progressing:
-[![Stories in Ready](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=ready&title=Ready)](https://waffle.io/coolharsh55/hdd-indexer)
-[![Stories in Progress](https://badge.waffle.io/coolharsh55/hdd-indexer.png?label=in+progress&title=In+Progress)](https://waffle.io/coolharsh55/hdd-indexer)
-[![Throughput Graph](http://graphs.waffle.io/coolharsh55/hdd-indexer/throughput.svg)](https://waffle.io/coolharsh55/hdd-indexer/metrics)
+> THIS PROJECT IS NOW ABANDONED / HAS NO ACTIVE DEVELOPMENT. THE CORE OF THE PROJECT, NAMELY **MOVIE METADATA** BEING USED IN ANOTHER PROJECT TERMED **[MOVIE INDEXER](https://github.com/coolharsh55/movie-indexer)**. THE TORRENT FILE NAME CLEANER IS TO BE IMPLEMENTED AS A SEPARATE MODULE NAMED **[TORRENT RENAMER](https://github.com/coolharsh55/torrent-renamer)**.
+
 
 ## What is HDD-indexer?
 **hdd-indexer** is an utility that indexes the contents of a hard disk, and allows viewing and interacting with it based on **metadata**. Currently, it supports only *video* files, specifically *movies*.
